@@ -1,0 +1,41 @@
+.splash-content {
+  --background: var(--ion-color-light);
+}
+
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+}
+
+.logo-container {
+  animation: logoFadeInOut 3s ease-in-out forwards;
+}
+
+.logo-image {
+  width: min(92vw, 560px);
+  height: auto;
+  filter: drop-shadow(0 8px 22px rgba(124, 106, 232, 0.25));
+}
+
+@keyframes logoFadeInOut {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}

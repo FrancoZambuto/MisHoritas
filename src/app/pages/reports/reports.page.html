@@ -1,0 +1,252 @@
+<ion-header class="reports-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Reportes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="reports-content">
+  <div class="period-selector">
+    <ion-item lines="none" class="select-item">
+      <ion-select
+        [(ngModel)]="selectedPeriodId"
+        (ionChange)="onPeriodChange()"
+        interface="action-sheet"
+        [interfaceOptions]="{ header: 'Período' }"
+      >
+        @for (option of periodOptions; track option.id) {
+          <ion-select-option [value]="option.id">{{ option.label }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  </div>
+
+  @if (loading) {
+    <div class="empty-state">
+      <ion-icon name="analytics-outline"></ion-icon>
+      <p>Cargando reportes...</p>
+    </div>
+  } @else if (!report?.hasConfirmedData) {
+    <div class="empty-state">
+      <ion-icon name="warning-outline"></ion-icon>
+      <p>Todavía no hay datos financieros para este período.</p>
+      <p class="empty-hint">Los reportes usan solo meses con facturación confirmada.</p>
+      <ion-button expand="block" color="primary" (click)="goToBilling()" class="empty-cta">
+        Ir a facturación
+      </ion-button>
+    </div>
+  } @else if (report) {
+    <div class="period-caption">{{ report.period.label }}</div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-card--accent">
+        <div class="kpi-icon"><ion-icon name="cash-outline"></ion-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Facturado</span>
+          <span class="kpi-value">{{ formatCurrency(report.summary.totalRevenue) }}</span>
+          @if (comparisonText) {
+            <span class="kpi-delta" [class.kpi-delta--up]="comparisonPositive" [class.kpi-delta--down]="!comparisonPositive">
+              {{ comparisonText }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><ion-icon name="time-outline"></ion-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Horas facturadas</span>
+          <span class="kpi-value">{{ formatHours(report.summary.totalHours) }}</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><ion-icon name="trending-up-outline"></ion-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Promedio / hora</span>
+          <span class="kpi-value">{{ formatRate(report.summary.averageHourlyRate) }}</span>
+          <span class="kpi-note">Solo ingresos por horas</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><ion-icon name="business-outline"></ion-icon></div>
+        <div class="kpi-body">
+          <span class="kpi-label">Establecimientos</span>
+          <span class="kpi-value">{{ report.summary.establishmentsCount }}</span>
+        </div>
+      </div>
+    </div>
+
+    @if (report.period.isMultiMonth && report.summary.yearLabel != null) {
+      <div class="highlight-card">
+        <div class="highlight-title">Facturado en {{ report.summary.yearLabel }}</div>
+        <div class="highlight-value">{{ formatCurrency(report.summary.totalRevenue) }}</div>
+        @if (report.summary.monthlyAverageRevenue != null) {
+          <div class="highlight-sub">
+            Promedio mensual: {{ formatCurrency(report.summary.monthlyAverageRevenue) }}
+          </div>
+        }
+      </div>
+    }
+
+    @if (report.summary.bestMonth || report.summary.bestEstablishmentByRate) {
+      <div class="insight-row">
+        @if (report.summary.bestMonth) {
+          <div class="insight-card">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <div>
+              <div class="insight-label">Mejor mes</div>
+              <div class="insight-title">{{ report.summary.bestMonth.label }}</div>
+              <div class="insight-value">{{ formatCurrency(report.summary.bestMonth.revenue) }}</div>
+            </div>
+          </div>
+        }
+        @if (report.summary.bestEstablishmentByRate) {
+          <div class="insight-card">
+            <ion-icon name="trophy-outline"></ion-icon>
+            <div>
+              <div class="insight-label">Mayor ingreso por hora</div>
+              <div class="insight-title">{{ report.summary.bestEstablishmentByRate.name }}</div>
+              <div class="insight-value">{{ formatRate(report.summary.bestEstablishmentByRate.averageRate) }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Evolution -->
+    @if (report.period.isMultiMonth) {
+      <div class="section-title">Evolución del facturado</div>
+      <div class="chart-card">
+        <div class="chart-wrap chart-wrap--line">
+          <canvas #evolutionCanvas></canvas>
+        </div>
+      </div>
+    }
+
+    <!-- By establishment -->
+    <div class="section-title">Ingresos por establecimiento</div>
+    <div class="chart-card">
+      <div class="chart-wrap" [style.height.px]="establishmentChartHeight">
+        <canvas #establishmentCanvas></canvas>
+      </div>
+      <div class="list-block">
+        @for (item of report.byEstablishment; track item.name) {
+          <div class="list-row">
+            <div class="list-main">
+              <span class="list-name">{{ item.name }}</span>
+              <span class="list-meta">{{ formatHours(item.hours) }} · {{ formatPercent(item.percentage) }}</span>
+            </div>
+            <span class="list-amount">{{ formatCurrency(item.revenue) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- By hour type -->
+    <div class="section-title">Ingresos por tipo de hora</div>
+    <div class="chart-card">
+      @if (showDoughnut) {
+        <div class="chart-wrap chart-wrap--doughnut">
+          <canvas #hourTypeCanvas></canvas>
+        </div>
+      }
+      <div class="list-block">
+        @for (item of report.byHourType; track item.name) {
+          <div class="list-row">
+            <div class="list-main">
+              <span class="list-name">{{ item.name }}</span>
+              <span class="list-meta">
+                {{ formatHours(item.hours) }} · {{ formatPercent(item.percentage) }} del ingreso por horas
+              </span>
+            </div>
+            <span class="list-amount">{{ formatCurrency(item.revenue) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="section-title">Ingresos por origen</div>
+    <div class="chart-card">
+      <div class="list-block">
+        <div class="list-row">
+          <div class="list-main">
+            <span class="list-name">Horas</span>
+          </div>
+          <span class="list-amount">{{ formatCurrency(report.summary.hourlyRevenue) }}</span>
+        </div>
+        <div class="list-row">
+          <div class="list-main">
+            <span class="list-name">Adicionales</span>
+          </div>
+          <span class="list-amount">{{ formatCurrency(report.summary.adicionalesRevenue) }}</span>
+        </div>
+      </div>
+    </div>
+
+    @if (report.byAdicional.length > 0) {
+      <div class="section-title">Adicionales</div>
+      <div class="chart-card">
+        <div class="list-block">
+          @for (item of report.byAdicional; track item.name) {
+            <div class="list-row">
+              <div class="list-main">
+                <span class="list-name">{{ item.name }}</span>
+                <span class="list-meta">{{ formatPercent(item.percentage) }} de adicionales</span>
+              </div>
+              <span class="list-amount">{{ formatCurrency(item.revenue) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Efficiency -->
+    <div class="section-title">Horas vs ingreso</div>
+    <div class="chart-card">
+      <div class="list-block">
+        @for (item of report.efficiencyByEstablishment; track item.name) {
+          <div class="efficiency-row">
+            <div class="list-name">{{ item.name }}</div>
+            <div class="efficiency-metrics">
+              <span>{{ formatHours(item.hours) }}</span>
+              <span>{{ formatCurrency(item.revenue) }}</span>
+              <span class="efficiency-rate">{{ formatRate(item.averageRate) }} promedio</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Rate evolution -->
+    @if (rateOptions.length > 0) {
+      <div class="section-title">Evolución de tarifas</div>
+      <div class="chart-card">
+        <ion-item lines="none" class="select-item nested-select">
+          <ion-select
+            [(ngModel)]="selectedRateKey"
+            (ionChange)="onRateSeriesChange()"
+            interface="action-sheet"
+            [interfaceOptions]="{ header: 'Tarifa' }"
+          >
+            @for (option of rateOptions; track option.label) {
+              <ion-select-option [value]="option.establecimiento + ':::' + option.tipoHora">
+                {{ option.label }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <div class="chart-wrap chart-wrap--line">
+          <canvas #rateCanvas></canvas>
+        </div>
+        <p class="rate-hint">Solo tarifas usadas en cálculos confirmados.</p>
+      </div>
+    }
+  }
+</ion-content>

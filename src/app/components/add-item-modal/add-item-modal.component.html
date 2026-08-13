@@ -1,0 +1,65 @@
+<ion-header class="modal-header">
+  <ion-toolbar>
+    <ion-title>{{ title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+    <div class="step-icon">
+      @if (itemType === 'establecimiento') {
+        <ion-icon name="business-outline"></ion-icon>
+      } @else {
+        <ion-icon name="time-outline"></ion-icon>
+      }
+    </div>
+    <h2 class="step-title">{{ title }}</h2>
+
+    @if (itemType === 'tipoHora') {
+      <ion-item lines="none" class="est-select-item">
+        <ion-select
+          [(ngModel)]="selectedEstablecimiento"
+          (ionChange)="onEstablecimientoChange()"
+          placeholder="Seleccionar establecimiento"
+          interface="action-sheet"
+          [interfaceOptions]="{ header: 'Establecimiento' }"
+        >
+          @for (est of establecimientos; track est) {
+            <ion-select-option [value]="est">{{ est }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+    }
+    
+    @for (key of [itemType === 'tipoHora' ? selectedEstablecimiento : 'establecimientos']; track key) {
+      <app-dynamic-list-input
+        [title]="subtitle"
+        [placeholder]="placeholder"
+        [minLength]="minLength"
+        [maxLength]="maxLength"
+        [initialValues]="items"
+        (valuesChange)="onItemsChange($event)"
+        (validityChange)="onValidityChange($event)"
+      ></app-dynamic-list-input>
+    }
+  </div>
+</ion-content>
+
+<ion-footer class="modal-footer">
+  <ion-button
+    expand="block"
+    fill="solid"
+    color="primary"
+    [disabled]="!canSave"
+    (click)="save()"
+    class="save-btn"
+  >
+    <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+    Guardar cambios
+  </ion-button>
+</ion-footer>

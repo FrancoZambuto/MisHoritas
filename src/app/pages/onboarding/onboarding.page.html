@@ -1,0 +1,35 @@
+<ion-content class="onboarding-content" [fullscreen]="true">
+  <div class="onboarding-container">
+    <div class="hero-section">
+      <img src="assets/logo-with-text.png" alt="HoritasBioq" class="logo-image" />
+      <p class="subtitle">Gestiona tus horas de trabajo de forma simple y organizada</p>
+    </div>
+
+    <div class="features-section">
+      <div class="feature">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Registra tus horas día a día</span>
+      </div>
+      <div class="feature">
+        <ion-icon name="business-outline"></ion-icon>
+        <span>Múltiples establecimientos</span>
+      </div>
+      <div class="feature">
+        <ion-icon name="calculator-outline"></ion-icon>
+        <span>Calcula tu facturación</span>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <ion-button
+        expand="block"
+        size="large"
+        (click)="openWizard()"
+        class="start-btn"
+      >
+        Comenzar
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

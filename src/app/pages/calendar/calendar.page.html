@@ -1,0 +1,185 @@
+<ion-menu menuId="main-menu" contentId="main-content" side="end">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menú</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list lines="none" class="menu-list">
+      <ion-item button (click)="addEstablecimiento()" detail>
+        <ion-icon name="business-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>Agregar establecimiento</ion-label>
+      </ion-item>
+      <ion-item button (click)="addTipoHora()" detail>
+        <ion-icon name="time-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>Agregar tipo de hora</ion-label>
+      </ion-item>
+      <ion-item button (click)="goToBilling()" detail>
+        <ion-icon name="calculator-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>Calcular facturación</ion-label>
+      </ion-item>
+      <ion-item button (click)="goToReports()" detail>
+        <ion-icon name="analytics-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>Reportes</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-header class="calendar-header">
+  <ion-toolbar>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="assets/logo-without-text.png" alt="Logo" class="mini-logo-img" />
+        <span class="brand-name">HoritasBioq</span>
+      </div>
+      <ion-button fill="clear" (click)="openMenu()" class="menu-btn">
+        <ion-icon name="menu-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="main-content" class="calendar-content">
+  <div class="view-selector">
+    <ion-segment [value]="viewMode" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="day">
+        <ion-label>Día</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="week">
+        <ion-label>Semana</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="month">
+        <ion-label>Mes</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <div class="navigation-bar">
+    <ion-button fill="clear" (click)="previousPeriod()" class="nav-btn">
+      <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    
+    <div class="period-label" (click)="goToToday()">
+      @if (viewMode === 'month') {
+        {{ currentMonthYear }}
+      } @else if (viewMode === 'week') {
+        {{ currentWeekRange }}
+      } @else {
+        {{ currentDayFormatted }}
+      }
+    </div>
+    
+    <ion-button fill="clear" (click)="nextPeriod()" class="nav-btn">
+      <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Month View -->
+  @if (viewMode === 'month') {
+    <div class="month-view">
+      <div class="weekday-header">
+        @for (day of weekDays; track day) {
+          <div class="weekday">{{ day }}</div>
+        }
+      </div>
+      
+      <div class="days-grid">
+        @for (day of calendarDays; track day.date.getTime()) {
+          <div 
+            class="day-cell"
+            [class.other-month]="!day.isCurrentMonth"
+            [class.today]="day.isToday"
+            [class.has-entries]="day.hasEntries"
+            (click)="onDayClick(day)"
+          >
+            <span class="day-number">{{ day.dayNumber }}</span>
+            @if (day.hasEntries && day.isCurrentMonth) {
+              <span class="hours-badge">{{ day.totalHours | number:'1.0-1' }}h</span>
+              <div class="color-indicators">
+                @for (color of day.establecimientoColors; track $index) {
+                  <span class="color-dot" [style.background-color]="color"></span>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Week View -->
+  @if (viewMode === 'week') {
+    <div class="week-view">
+      @for (day of calendarDays; track day.date.getTime(); let i = $index) {
+        <div 
+          class="week-day-card"
+          [class.today]="day.isToday"
+          [class.has-entries]="day.hasEntries"
+          (click)="onDayClick(day)"
+        >
+          <div class="week-day-header">
+            <span class="week-day-name">{{ weekDays[i] }}</span>
+            <span class="week-day-number">{{ day.dayNumber }}</span>
+          </div>
+          <div class="week-day-content">
+            @if (day.hasEntries) {
+              <span class="week-hours">{{ day.totalHours | number:'1.1-1' }}h</span>
+              <div class="color-indicators">
+                @for (color of day.establecimientoColors; track $index) {
+                  <span class="color-bar" [style.background-color]="color"></span>
+                }
+              </div>
+            } @else {
+              <span class="week-empty">-</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Day View -->
+  @if (viewMode === 'day') {
+    <div class="day-view">
+      @if (calendarDays.length > 0) {
+        <div 
+          class="day-detail-card"
+          [class.has-entries]="calendarDays[0].hasEntries"
+          (click)="onDayClick(calendarDays[0])"
+        >
+          <div class="day-detail-icon">
+            <ion-icon [name]="calendarDays[0].hasEntries ? 'checkmark-circle' : 'add-circle-outline'"></ion-icon>
+          </div>
+          
+          @if (calendarDays[0].hasEntries) {
+            <div class="day-detail-info">
+              <span class="day-detail-hours">{{ calendarDays[0].totalHours | number:'1.1-1' }}</span>
+              <span class="day-detail-label">horas registradas</span>
+              <div class="color-indicators day-colors">
+                @for (color of calendarDays[0].establecimientoColors; track $index) {
+                  <span class="color-bar large" [style.background-color]="color"></span>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="day-detail-info">
+              <span class="day-detail-empty">Sin registros</span>
+              <span class="day-detail-label">Toca para agregar horas</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <div class="month-summary">
+    <div class="summary-card">
+      <ion-icon name="analytics-outline"></ion-icon>
+      <div class="summary-content">
+        <span class="summary-value">{{ getMonthTotalHours() | number:'1.1-1' }}</span>
+        <span class="summary-label">horas este mes</span>
+      </div>
+    </div>
+  </div>
+</ion-content>

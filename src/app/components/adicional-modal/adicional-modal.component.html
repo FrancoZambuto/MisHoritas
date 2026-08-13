@@ -1,0 +1,100 @@
+<ion-header class="modal-header">
+  <ion-toolbar>
+    <ion-title>{{ title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+    <div class="step-icon">
+      <ion-icon name="cash-outline"></ion-icon>
+    </div>
+    <h2 class="step-title">{{ title }}</h2>
+    <p class="step-subtitle">Monto fijo independiente de las horas trabajadas</p>
+
+    <label class="field-label">Concepto</label>
+    <ion-item lines="none" class="input-item">
+      <ion-input
+        [(ngModel)]="concepto"
+        placeholder="Ej: Viáticos"
+        maxlength="50"
+        (ionInput)="errorMessage = ''"
+      ></ion-input>
+    </ion-item>
+
+    @if (conceptoSuggestions.length > 0) {
+      <div class="suggestions">
+        @for (item of conceptoSuggestions; track item) {
+          <button
+            type="button"
+            class="suggestion-chip"
+            [class.suggestion-chip--active]="concepto === item"
+            (click)="selectConcepto(item)"
+          >
+            {{ item }}
+          </button>
+        }
+      </div>
+    }
+
+    <label class="field-label">Monto</label>
+    <ion-item lines="none" class="input-item">
+      <ion-input
+        type="number"
+        inputmode="decimal"
+        [(ngModel)]="monto"
+        placeholder="0"
+        (ionInput)="errorMessage = ''"
+      >
+        <span slot="start" class="currency-symbol">$</span>
+      </ion-input>
+    </ion-item>
+
+    <label class="field-label">Establecimiento</label>
+    <ion-item lines="none" class="input-item">
+      <ion-select
+        [(ngModel)]="establecimiento"
+        placeholder="Sin establecimiento"
+        interface="action-sheet"
+        [interfaceOptions]="{ header: 'Establecimiento' }"
+      >
+        <ion-select-option [value]="SIN_ESTABLECIMIENTO">Sin establecimiento</ion-select-option>
+        @for (est of establecimientos; track est) {
+          <ion-select-option [value]="est">{{ est }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <label class="field-label">Nota <span class="optional">(opcional)</span></label>
+    <ion-item lines="none" class="input-item">
+      <ion-input
+        [(ngModel)]="nota"
+        placeholder="Ej: Traslado Rosario"
+        maxlength="80"
+      ></ion-input>
+    </ion-item>
+
+    @if (errorMessage) {
+      <div class="error-message">{{ errorMessage }}</div>
+    }
+  </div>
+</ion-content>
+
+<ion-footer class="modal-footer">
+  <ion-button
+    expand="block"
+    fill="solid"
+    color="primary"
+    [disabled]="!canSave"
+    (click)="save()"
+    class="save-btn"
+  >
+    <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+    Guardar
+  </ion-button>
+</ion-footer>

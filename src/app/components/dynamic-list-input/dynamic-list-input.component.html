@@ -1,0 +1,49 @@
+<div class="dynamic-list-container">
+  <h3 class="list-title">{{ title }}</h3>
+  
+  <form [formGroup]="form">
+    <div formArrayName="items">
+      @for (item of items.controls; track $index; let i = $index) {
+        <div class="input-row">
+          <ion-item lines="none" class="input-item">
+            <ion-input
+              [formControlName]="i"
+              [placeholder]="placeholder"
+              type="text"
+              [maxlength]="maxLength"
+              class="custom-input"
+            ></ion-input>
+          </ion-item>
+          
+          @if (items.length > 1) {
+            <ion-button
+              fill="clear"
+              color="danger"
+              (click)="removeItem(i)"
+              class="remove-btn"
+            >
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          }
+        </div>
+        
+        @if (hasError(i)) {
+          <div class="error-message">
+            {{ getErrorMessage(i) }}
+          </div>
+        }
+      }
+    </div>
+  </form>
+  
+  <ion-button
+    expand="block"
+    fill="outline"
+    color="primary"
+    (click)="addItem()"
+    class="add-btn"
+  >
+    <ion-icon name="add-outline" slot="start"></ion-icon>
+    Agregar otro
+  </ion-button>
+</div>

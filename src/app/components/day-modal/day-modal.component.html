@@ -1,0 +1,117 @@
+<ion-header class="modal-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ displayDate }}</ion-title>
+    <ion-buttons slot="end">
+      @if (existingEntries.length > 0) {
+        <ion-button color="danger" (click)="confirmDelete()">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <form [formGroup]="form">
+    <div formArrayName="entries">
+      @for (entry of entries.controls; track $index; let i = $index) {
+        <div class="entry-card" [formGroupName]="$index">
+          @if (entries.length > 1) {
+            <div class="entry-header">
+              <ion-button fill="clear" color="danger" size="small" (click)="removeEntry(i)">
+                <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          }
+
+          <ion-item lines="none" class="select-item">
+            <ion-select
+              formControlName="establecimiento"
+              (ionChange)="onEstablecimientoChange(i)"
+              placeholder="Seleccionar establecimiento"
+              interface="action-sheet"
+              [interfaceOptions]="{ header: 'Establecimiento' }"
+            >
+              @for (est of establecimientos; track est) {
+                <ion-select-option [value]="est">{{ est }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          @if (getEntryError(i, 'establecimiento')) {
+            <div class="field-error">Seleccione un establecimiento</div>
+          }
+
+          <ion-item lines="none" class="select-item">
+            <ion-select
+              formControlName="tipoHora"
+              placeholder="Seleccionar tipo de hora"
+              interface="action-sheet"
+              [interfaceOptions]="{ header: 'Tipo de hora' }"
+            >
+              @for (tipo of getTiposDeHoraForEntry(i); track tipo) {
+                <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          @if (getEntryError(i, 'tipoHora')) {
+            <div class="field-error">Seleccione un tipo de hora</div>
+          }
+
+          <ion-item lines="none" class="input-item">
+            <ion-input
+              formControlName="cantidad"
+              type="number"
+              inputmode="decimal"
+              step="0.5"
+              min="0.01"
+              placeholder="Cantidad de horas"
+            ></ion-input>
+          </ion-item>
+          @if (getEntryError(i, 'cantidad')) {
+            <div class="field-error">Ingrese una cantidad válida mayor a 0</div>
+          }
+        </div>
+      }
+    </div>
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      color="primary"
+      (click)="addEntry()"
+      class="add-entry-btn"
+    >
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      Agregar otro registro
+    </ion-button>
+  </form>
+
+  <div class="total-section" [class.error]="exceedsMaxHours">
+    <span class="total-label">Total del día:</span>
+    <span class="total-value">{{ getTotalHours() | number:'1.1-2' }} / 24 horas</span>
+  </div>
+  
+  @if (exceedsMaxHours) {
+    <div class="error-banner">
+      <ion-icon name="warning-outline"></ion-icon>
+      <span>El total no puede superar 24 horas</span>
+    </div>
+  }
+</ion-content>
+
+<ion-footer class="modal-footer">
+  <ion-button
+    expand="block"
+    color="primary"
+    (click)="save()"
+    class="save-btn"
+  >
+    <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+    Guardar
+  </ion-button>
+</ion-footer>

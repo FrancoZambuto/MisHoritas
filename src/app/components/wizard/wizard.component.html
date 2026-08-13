@@ -1,0 +1,161 @@
+<ion-header class="wizard-header">
+  <ion-toolbar>
+    <ion-title>Configuración inicial</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="wizard-content">
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width]="getProgressWidth()"></div>
+    </div>
+    <span class="step-indicator">Paso {{ currentStep }} de {{ totalSteps }}</span>
+  </div>
+
+  <div class="wizard-body">
+    <!-- STEP 1: Nombre -->
+    @if (currentStep === 1) {
+      <div class="step-container fade-in">
+        <div class="step-icon">
+          <ion-icon name="person-outline"></ion-icon>
+        </div>
+        <h2 class="step-title">¿Cómo te llamas?</h2>
+        <p class="step-subtitle">Ingresa tu nombre</p>
+        
+        <form [formGroup]="nombreForm" class="nombre-form">
+          <ion-item lines="none" class="input-item">
+            <ion-input
+              formControlName="nombre"
+              placeholder="Tu nombre"
+              type="text"
+              maxlength="25"
+              class="custom-input"
+            ></ion-input>
+          </ion-item>
+          
+          @if (nombreInvalid) {
+            <div class="error-message">
+              {{ nombreErrorMessage }}
+            </div>
+          }
+        </form>
+      </div>
+    }
+
+    <!-- STEP 2: Establecimientos -->
+    @if (currentStep === 2) {
+      <div class="step-container fade-in">
+        <div class="step-icon">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <h2 class="step-title">Tus lugares de trabajo</h2>
+        
+        <app-dynamic-list-input
+          title="Ingrese el establecimiento, ej: Sanatorio Privado Argentino"
+          placeholder="Nombre del establecimiento"
+          [minLength]="3"
+          [maxLength]="50"
+          [initialValues]="wizardState.establecimientos"
+          (valuesChange)="onEstablecimientosChange($event)"
+          (validityChange)="onEstablecimientosValidityChange($event)"
+        ></app-dynamic-list-input>
+      </div>
+    }
+
+    <!-- STEP 3: Tipos de horas -->
+    @if (currentStep === 3) {
+      <div class="step-container fade-in">
+        <div class="step-icon">
+          <ion-icon name="time-outline"></ion-icon>
+        </div>
+        <h2 class="step-title">Tipos de horas</h2>
+
+        <ion-item lines="none" class="step3-select-item">
+          <ion-select
+            [(ngModel)]="selectedEstablecimientoStep3"
+            (ionChange)="onStep3EstablecimientoChange()"
+            placeholder="Seleccionar establecimiento"
+            toggleIcon="chevron-down-outline"
+            expandedIcon="chevron-down-outline"
+            interface="action-sheet"
+            [interfaceOptions]="{ header: 'Establecimiento' }"
+          >
+            @for (est of wizardState.establecimientos; track est) {
+              <ion-select-option [value]="est">{{ est }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        
+        @for (est of [selectedEstablecimientoStep3]; track est) {
+          <app-dynamic-list-input
+            [title]="'Defina los tipos de horas para ' + selectedEstablecimientoStep3 + ', ej: Horas extras'"
+            placeholder="Tipo de hora"
+            [minLength]="3"
+            [maxLength]="50"
+            [initialValues]="getTiposDeHoraForSelectedEstablecimiento()"
+            (valuesChange)="onTiposDeHoraChange($event)"
+            (validityChange)="onTiposDeHoraValidityChange($event)"
+          ></app-dynamic-list-input>
+        }
+      </div>
+    }
+  </div>
+</ion-content>
+
+<ion-footer class="wizard-footer">
+  <div class="footer-buttons">
+    @if (currentStep > 1) {
+      <ion-button
+        fill="outline"
+        color="medium"
+        (click)="prevStep()"
+        class="nav-btn"
+      >
+        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+        Anterior
+      </ion-button>
+    } @else {
+      <div class="spacer"></div>
+    }
+
+    @if (currentStep < totalSteps) {
+      <ion-button
+        fill="solid"
+        color="primary"
+        [disabled]="(currentStep === 1 && !canProceedStep1()) || (currentStep === 2 && !canProceedStep2())"
+        (click)="nextStep()"
+        class="nav-btn"
+      >
+        Siguiente
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    } @else if (shouldFinishStep3) {
+      <ion-button
+        fill="solid"
+        color="success"
+        [disabled]="!canProceedCurrentEstablecimientoStep3()"
+        (click)="onStep3PrimaryAction()"
+        class="nav-btn finish-btn"
+      >
+        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+        Finalizar
+      </ion-button>
+    } @else {
+      <ion-button
+        fill="solid"
+        color="primary"
+        [disabled]="!canProceedCurrentEstablecimientoStep3()"
+        (click)="onStep3PrimaryAction()"
+        class="nav-btn"
+      >
+        Siguiente
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    }
+  </div>
+</ion-footer>

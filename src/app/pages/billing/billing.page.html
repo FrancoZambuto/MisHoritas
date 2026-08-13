@@ -1,0 +1,222 @@
+<ion-header class="billing-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Facturación</ion-title>
+    @if (hasConfirmedBilling && !isSnapshotOutdated) {
+      <ion-buttons slot="end">
+        <ion-button (click)="exportPdf()" [disabled]="exportingPdf">
+          <ion-icon name="document-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="billing-content">
+  <div class="period-selector">
+    <ion-item lines="none" class="select-item">
+      <ion-select
+        [(ngModel)]="selectedMonth"
+        (ionChange)="onPeriodChange()"
+        interface="action-sheet"
+        [interfaceOptions]="{ header: 'Seleccionar mes' }"
+      >
+        @for (month of months; track month; let i = $index) {
+          <ion-select-option [value]="i">{{ month }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+    
+    <ion-item lines="none" class="select-item">
+      <ion-select
+        [(ngModel)]="selectedYear"
+        (ionChange)="onPeriodChange()"
+        interface="action-sheet"
+        [interfaceOptions]="{ header: 'Seleccionar año' }"
+      >
+        @for (year of years; track year) {
+          <ion-select-option [value]="year">{{ year }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-icon">
+      <ion-icon name="analytics-outline"></ion-icon>
+    </div>
+    <div class="summary-info">
+      <span class="summary-value">{{ getTotalHoursForMonth() | number:'1.1-1' }}</span>
+      <span class="summary-label">horas totales en {{ months[selectedMonth] }}</span>
+    </div>
+  </div>
+
+  @if (hasConfirmedBilling && !isSnapshotOutdated) {
+    <div class="status-banner status-banner--ok">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      <span>Cálculo guardado para {{ months[selectedMonth] }}. Los cambios futuros de tarifas no lo modifican.</span>
+    </div>
+  }
+
+  @if (hasConfirmedBilling && isSnapshotOutdated) {
+    <div class="status-banner status-banner--warn">
+      <ion-icon name="warning-outline"></ion-icon>
+      <span>{{ outdatedMessage }}</span>
+    </div>
+  }
+
+  <div class="section-title">Resumen por tipo de hora</div>
+  
+  <div class="valores-list">
+    @for (line of billingLines; track lineKey(line)) {
+      <div class="valor-card">
+        <div class="valor-header">
+          <div class="valor-titles">
+            <span class="valor-establecimiento">{{ line.establecimiento }}</span>
+            <span class="valor-tipo">{{ line.tipoHora }}</span>
+          </div>
+          <span class="valor-hours">{{ getHoursForLine(line) | number:'1.1-1' }}h</span>
+        </div>
+        
+        <ion-item lines="none" class="input-item">
+          <ion-input
+            type="number"
+            inputmode="decimal"
+            placeholder="Valor por hora ($)"
+            [clearInput]="true"
+            [value]="valoresMap[lineKey(line)] ?? ''"
+            (ionInput)="onValorChange(line, $event)"
+          >
+            <span slot="start" class="currency-symbol">$</span>
+          </ion-input>
+        </ion-item>
+      </div>
+    }
+  </div>
+
+  @if (billingLines.length === 0) {
+    <div class="empty-state empty-state--compact">
+      <ion-icon name="time-outline"></ion-icon>
+      <p>{{ emptyStateMessage }}</p>
+    </div>
+  }
+
+  <div class="section-title">Adicionales</div>
+  <div class="adicionales-list">
+    @for (item of adicionales; track item.id) {
+      <div class="adicional-card">
+        <div class="adicional-main">
+          <span class="adicional-concepto">{{ item.concepto }}</span>
+          <span class="adicional-meta">
+            {{ item.establecimiento || 'Sin establecimiento' }}
+            @if (item.nota) {
+              · {{ item.nota }}
+            }
+          </span>
+        </div>
+        <div class="adicional-actions">
+          <span class="adicional-monto">{{ formatCurrency(item.monto) }}</span>
+          <ion-button fill="clear" size="small" (click)="editAdicional(item)">
+            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" color="danger" (click)="removeAdicional(item)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <ion-button
+    expand="block"
+    fill="outline"
+    color="primary"
+    (click)="addAdicional()"
+    class="add-adicional-btn"
+  >
+    <ion-icon name="add-outline" slot="start"></ion-icon>
+    Agregar adicional
+  </ion-button>
+
+  @if (canCalculate) {
+    <ion-button
+      expand="block"
+      color="primary"
+      (click)="onPrimaryAction()"
+      class="calculate-btn"
+    >
+      <ion-icon name="calculator-outline" slot="start"></ion-icon>
+      {{ primaryActionLabel }}
+    </ion-button>
+  }
+
+  @if (billingResult) {
+    <div class="results-section fade-in">
+      <div class="section-title">Horas</div>
+      
+      @for (item of billingResult.items; track lineKey(item)) {
+        @if (item.totalHoras > 0) {
+          <div class="result-item">
+            <div class="result-info">
+              <span class="result-establecimiento">{{ item.establecimiento }}</span>
+              <span class="result-tipo">{{ item.tipoHora }}</span>
+              <span class="result-detail">
+                {{ item.totalHoras | number:'1.1-1' }}h × {{ formatCurrency(item.valorPorHora) }}
+              </span>
+            </div>
+            <span class="result-subtotal">{{ formatCurrency(item.subtotal) }}</span>
+          </div>
+        }
+      }
+
+      <div class="subtotal-row">
+        <span>Subtotal horas</span>
+        <span>{{ formatCurrency(billingResult.subtotalHoras) }}</span>
+      </div>
+
+      @if (billingResult.adicionales.length > 0) {
+        <div class="section-title">Adicionales</div>
+        @for (item of billingResult.adicionales; track item.id) {
+          <div class="result-item">
+            <div class="result-info">
+              <span class="result-establecimiento">{{ item.establecimiento || 'Sin establecimiento' }}</span>
+              <span class="result-tipo">{{ item.concepto }}</span>
+              @if (item.nota) {
+                <span class="result-detail">{{ item.nota }}</span>
+              }
+            </div>
+            <span class="result-subtotal">{{ formatCurrency(item.monto) }}</span>
+          </div>
+        }
+
+        <div class="subtotal-row">
+          <span>Subtotal adicionales</span>
+          <span>{{ formatCurrency(billingResult.subtotalAdicionales) }}</span>
+        </div>
+      }
+      
+      <div class="total-card">
+        <span class="total-label">Total a facturar</span>
+        <span class="total-value">{{ formatCurrency(billingResult.totalGeneral) }}</span>
+      </div>
+
+      @if (hasConfirmedBilling && !isSnapshotOutdated) {
+        <ion-button
+          expand="block"
+          fill="outline"
+          color="medium"
+          (click)="exportPdf()"
+          [disabled]="exportingPdf"
+          class="export-btn"
+        >
+          <ion-icon name="document-outline" slot="start"></ion-icon>
+          Exportar PDF
+        </ion-button>
+      }
+    </div>
+  }
+</ion-content>

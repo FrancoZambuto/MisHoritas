@@ -1,0 +1,419 @@
+.calendar-header {
+  ion-toolbar {
+    --background: var(--ion-color-light);
+    --border-width: 0;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+  }
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mini-logo-img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--ion-color-dark);
+}
+
+.menu-btn {
+  --color: var(--ion-color-dark);
+  font-size: 1.4rem;
+}
+
+.calendar-content {
+  --background: var(--ion-color-light);
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+.view-selector {
+  padding: 16px 0 8px;
+  
+  ion-segment {
+    --background: var(--hb-surface);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  
+  ion-segment-button {
+    --border-radius: 10px;
+    --indicator-color: var(--ion-color-primary);
+    --color: var(--ion-color-medium);
+    --color-checked: white;
+    font-weight: 500;
+    min-height: 36px;
+  }
+}
+
+.navigation-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.nav-btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --color: var(--ion-color-dark);
+}
+
+.period-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  
+  &:active {
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+}
+
+// Month View
+.month-view {
+  background: var(--hb-surface);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.weekday-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ion-color-medium);
+  padding: 8px 0;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &.other-month {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  
+  &.today {
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+    
+    .day-number {
+      color: var(--ion-color-primary);
+      font-weight: 700;
+    }
+  }
+  
+  &.has-entries {
+    background: rgba(var(--ion-color-primary-rgb), 0.15);
+    
+    .day-number {
+      color: var(--ion-color-primary-shade);
+      font-weight: 600;
+    }
+    
+    .hours-badge {
+      color: var(--ion-color-primary);
+      font-weight: 700;
+    }
+  }
+  
+  &.today.has-entries {
+    background: rgba(var(--ion-color-primary-rgb), 0.25);
+  }
+}
+
+.day-number {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-text-color);
+}
+
+.hours-badge {
+  font-size: 0.6rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+// Week View
+.week-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.week-day-card {
+  background: var(--hb-surface);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  
+  &:active {
+    transform: scale(0.97);
+  }
+  
+  &.today {
+    border: 2px solid var(--ion-color-primary);
+  }
+  
+  &.has-entries {
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+    border: 2px solid rgba(var(--ion-color-primary-rgb), 0.3);
+    
+    .week-day-name {
+      color: var(--ion-color-primary);
+    }
+    
+    .week-day-number {
+      color: var(--ion-color-primary-shade);
+    }
+    
+    .week-hours {
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+.week-day-header {
+  margin-bottom: 8px;
+}
+
+.week-day-name {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+}
+
+.week-day-number {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.week-hours {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+
+.week-empty {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium-tint);
+}
+
+// Day View
+.day-view {
+  padding: 16px 0;
+}
+
+.day-detail-card {
+  background: var(--hb-surface);
+  border-radius: 20px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  &.has-entries {
+    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+    
+    .day-detail-icon ion-icon {
+      color: white;
+    }
+    
+    .day-detail-hours,
+    .day-detail-label {
+      color: white;
+    }
+    
+    .day-detail-label {
+      opacity: 0.85;
+    }
+  }
+}
+
+.day-detail-icon {
+  margin-bottom: 16px;
+  
+  ion-icon {
+    font-size: 56px;
+    color: var(--ion-color-primary);
+  }
+}
+
+.day-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.day-detail-hours {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+}
+
+.day-detail-empty {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.day-detail-label {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+// Month Summary
+.month-summary {
+  padding: 20px 0;
+}
+
+.summary-card {
+  background: var(--hb-surface);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  
+  ion-icon {
+    font-size: 28px;
+    color: var(--ion-color-primary);
+  }
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--hb-accent-secondary);
+}
+
+.summary-label {
+  font-size: 0.85rem;
+  color: var(--hb-accent-secondary);
+}
+
+// Menu Styles
+.menu-list {
+  padding: 8px;
+  
+  ion-item {
+    --background: transparent;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 56px;
+    margin-bottom: 4px;
+    border-radius: 12px;
+    
+    &:hover {
+      --background: var(--ion-color-light);
+    }
+    
+    ion-icon {
+      font-size: 22px;
+      margin-right: 12px;
+    }
+    
+    ion-label {
+      font-weight: 500;
+    }
+  }
+}
+
+// Color Indicators
+.color-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.color-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.color-bar {
+  width: 16px;
+  height: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  
+  &.large {
+    width: 28px;
+    height: 6px;
+    border-radius: 3px;
+  }
+}
+
+.day-colors {
+  margin-top: 12px;
+}

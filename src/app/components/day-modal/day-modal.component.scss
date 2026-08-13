@@ -1,0 +1,126 @@
+.modal-header {
+  ion-toolbar {
+    --background: var(--ion-color-light);
+    --border-width: 0;
+  }
+  
+  ion-title {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+}
+
+.modal-content {
+  --background: var(--ion-color-light);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+}
+
+.entry-card {
+  background: var(--hb-surface);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.entry-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.select-item,
+.input-item {
+  --background: var(--hb-input-bg);
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+
+  ion-select,
+  ion-input {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    font-size: 0.95rem;
+  }
+}
+
+.field-error {
+  color: var(--ion-color-danger);
+  font-size: 0.75rem;
+  margin: -4px 0 8px 16px;
+}
+
+.add-entry-btn {
+  --border-radius: 12px;
+  margin: 8px 0 24px;
+  font-weight: 500;
+}
+
+.total-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--hb-surface);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+
+  &.error {
+    background: #fff0f0;
+    border: 1px solid var(--ion-color-danger);
+    
+    .total-value {
+      color: var(--ion-color-danger);
+    }
+  }
+}
+
+.total-label {
+  font-size: 0.95rem;
+  color: var(--ion-color-medium-shade);
+}
+
+.total-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ion-color-danger);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+.modal-footer {
+  background: var(--ion-color-light);
+  border-top: none;
+  padding: 16px;
+  padding-bottom: calc(16px + var(--ion-safe-area-bottom, 0px));
+}
+
+.save-btn {
+  --border-radius: 14px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-weight: 600;
+  font-size: 1rem;
+}

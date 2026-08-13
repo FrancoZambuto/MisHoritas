@@ -1,37 +1,193 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+ion-content {
+  --keyboard-offset: 0px !important;
+}
+
+ion-modal {
+  --border-radius: 20px 20px 0 0;
+
+  &.wizard-modal {
+    --height: 90%;
+    --border-radius: 24px 24px 0 0;
+  }
+
+  &.day-modal {
+    --height: 85%;
+    --border-radius: 24px 24px 0 0;
+  }
+
+  &.add-item-modal {
+    --height: 85%;
+    --border-radius: 24px 24px 0 0;
+  }
+
+  &.adicional-modal {
+    --height: 88%;
+    --border-radius: 24px 24px 0 0;
+  }
+}
+
+ion-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+ion-button {
+  --box-shadow: none;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+ion-segment {
+  --background: transparent;
+}
+
+ion-segment-button {
+  --indicator-box-shadow: none;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+ion-input,
+ion-select {
+  --color: var(--ion-text-color);
+  --placeholder-color: var(--ion-color-medium);
+  --placeholder-opacity: 0.7;
+}
+
+ion-header ion-buttons[slot="end"] ion-button {
+  --color: var(--ion-color-danger);
+}
+
+ion-select::part(icon) {
+  color: var(--ion-color-medium);
+}
+
+ion-toolbar {
+  --border-width: 0 !important;
+}
+
+ion-header::after {
+  display: none;
+}
+
+ion-list {
+  background: transparent;
+}
+
+ion-menu {
+  --background: var(--ion-color-light);
+  --width: 280px;
+
+  ion-content {
+    --background: var(--ion-color-light);
+  }
+
+  ion-toolbar {
+    --background: var(--ion-color-light);
+  }
+}
+
+ion-action-sheet {
+  --backdrop-opacity: 0.5;
+}
+
+ion-action-sheet::part(container) {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  bottom: auto;
+  width: 90%;
+  max-width: 400px;
+}
+
+ion-action-sheet .action-sheet-group {
+  background: var(--ion-color-light) !important;
+  border-radius: 16px !important;
+}
+
+ion-action-sheet .action-sheet-group-cancel {
+  margin-top: 8px !important;
+}
+
+.alert-wrapper {
+  border-radius: 16px !important;
+}
+
+.alert-button {
+  border-radius: 8px !important;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ios {
+  ion-content {
+    --padding-bottom: 20px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease forwards;
+}

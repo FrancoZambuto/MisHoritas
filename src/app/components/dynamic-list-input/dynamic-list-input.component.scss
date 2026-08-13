@@ -1,0 +1,61 @@
+.dynamic-list-container {
+  padding: 8px 0;
+}
+
+.list-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ion-color-dark);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.input-item {
+  flex: 1;
+  --background: var(--hb-input-bg);
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border-radius: 12px;
+
+  ion-input {
+    --color: var(--ion-text-color);
+    --placeholder-color: var(--ion-color-medium);
+    --placeholder-opacity: 1;
+  }
+}
+
+.custom-input {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --color: var(--ion-text-color);
+  font-size: 0.95rem;
+}
+
+.remove-btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin: 0;
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  font-size: 0.75rem;
+  margin: -4px 0 8px 4px;
+  padding-left: 16px;
+}
+
+.add-btn {
+  margin-top: 16px;
+  --border-radius: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-weight: 500;
+}
