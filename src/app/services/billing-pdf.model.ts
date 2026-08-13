@@ -100,7 +100,7 @@ export function buildBillingPdfDocumentData(
     .replace(/^-+|-+$/g, '') || 'usuario';
 
   return {
-    appName: 'HoritasBioq',
+    appName: 'MisHoritas',
     userName: userName || 'Usuario',
     periodLabel,
     periodKey: snapshot.periodKey,

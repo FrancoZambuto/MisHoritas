@@ -19,6 +19,7 @@ import { addIcons } from 'ionicons';
 import { 
   close,
   personOutline,
+  briefcaseOutline,
   businessOutline,
   timeOutline,
   chevronDownOutline,
@@ -28,7 +29,12 @@ import {
 } from 'ionicons/icons';
 import { DynamicListInputComponent } from '../dynamic-list-input/dynamic-list-input.component';
 import { UserService } from '../../services';
-import { WizardState } from '../../models';
+import {
+  WizardState,
+  ProfessionalAreaId,
+  PROFESSIONAL_AREAS,
+  isProfessionalAreaId
+} from '../../models';
 
 @Component({
   selector: 'app-wizard',
@@ -55,8 +61,16 @@ import { WizardState } from '../../models';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class WizardComponent implements OnInit {
-  currentStep: number = 1;
-  totalSteps: number = 3;
+  readonly steps = {
+    name: 1,
+    area: 2,
+    establecimientos: 3,
+    tiposHora: 4
+  } as const;
+
+  currentStep: number = this.steps.name;
+  totalSteps: number = this.steps.tiposHora;
+  readonly professionalAreas = PROFESSIONAL_AREAS;
   
   nombreForm!: FormGroup;
   
@@ -68,8 +82,8 @@ export class WizardComponent implements OnInit {
 
   establecimientosValid: boolean = false;
   tiposDeHoraPorEstablecimientoValid: { [establecimiento: string]: boolean } = {};
-  selectedEstablecimientoStep3: string = '';
-  private switchingStep3Establecimiento: boolean = false;
+  selectedEstablecimientoTipos: string = '';
+  private switchingTiposEstablecimiento: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -79,6 +93,7 @@ export class WizardComponent implements OnInit {
     addIcons({ 
       close,
       personOutline,
+      briefcaseOutline,
       businessOutline,
       timeOutline,
       chevronDownOutline,
@@ -119,30 +134,28 @@ export class WizardComponent implements OnInit {
   }
 
   canProceedStep2(): boolean {
-    return this.establecimientosValid && this.wizardState.establecimientos.length > 0;
+    return isProfessionalAreaId(this.wizardState.areaProfesional);
   }
 
   canProceedStep3(): boolean {
+    return this.establecimientosValid && this.wizardState.establecimientos.length > 0;
+  }
+
+  canProceedStep4(): boolean {
     if (this.wizardState.establecimientos.length === 0) return false;
     return this.wizardState.establecimientos.every(est => this.isEstablecimientoTiposValid(est));
   }
 
-  canProceedCurrentEstablecimientoStep3(): boolean {
-    return this.isEstablecimientoTiposValid(this.selectedEstablecimientoStep3);
+  canProceedCurrentEstablecimientoTipos(): boolean {
+    return this.isEstablecimientoTiposValid(this.selectedEstablecimientoTipos);
   }
 
-  get isLastEstablecimientoStep3(): boolean {
-    const list = this.wizardState.establecimientos;
-    if (list.length === 0) return true;
-    return list.indexOf(this.selectedEstablecimientoStep3) === list.length - 1;
+  get shouldFinishTiposStep(): boolean {
+    return this.canProceedCurrentEstablecimientoTipos() && this.canProceedStep4();
   }
 
-  get shouldFinishStep3(): boolean {
-    return this.canProceedCurrentEstablecimientoStep3() && this.canProceedStep3();
-  }
-
-  get step3PrimaryLabel(): string {
-    return this.shouldFinishStep3 ? 'Finalizar' : 'Siguiente';
+  selectArea(areaId: ProfessionalAreaId): void {
+    this.wizardState.areaProfesional = areaId;
   }
 
   private isEstablecimientoTiposValid(establecimiento: string): boolean {
@@ -151,16 +164,16 @@ export class WizardComponent implements OnInit {
     return tipos.length > 0 && (this.tiposDeHoraPorEstablecimientoValid[establecimiento] ?? this.isTiposListValid(tipos));
   }
 
-  private getNextEstablecimientoStep3(): string | null {
+  private getNextEstablecimientoTipos(): string | null {
     const list = this.wizardState.establecimientos;
-    const currentIndex = list.indexOf(this.selectedEstablecimientoStep3);
+    const currentIndex = list.indexOf(this.selectedEstablecimientoTipos);
 
     if (currentIndex >= 0 && currentIndex < list.length - 1) {
       return list[currentIndex + 1];
     }
 
     const incomplete = list.find(est => !this.isEstablecimientoTiposValid(est));
-    if (incomplete && incomplete !== this.selectedEstablecimientoStep3) {
+    if (incomplete && incomplete !== this.selectedEstablecimientoTipos) {
       return incomplete;
     }
 
@@ -168,34 +181,34 @@ export class WizardComponent implements OnInit {
   }
 
   nextStep(): void {
-    if (this.currentStep === 1) {
+    if (this.currentStep === this.steps.name) {
       this.wizardState.nombre = this.nombreForm.get('nombre')?.value?.trim();
     }
     
     if (this.currentStep < this.totalSteps) {
       this.currentStep++;
-      if (this.currentStep === 3) {
-        this.selectedEstablecimientoStep3 = this.wizardState.establecimientos[0] || '';
+      if (this.currentStep === this.steps.tiposHora) {
+        this.selectedEstablecimientoTipos = this.wizardState.establecimientos[0] || '';
       }
     }
   }
 
-  onStep3PrimaryAction(): void {
-    if (!this.canProceedCurrentEstablecimientoStep3()) return;
+  onTiposStepPrimaryAction(): void {
+    if (!this.canProceedCurrentEstablecimientoTipos()) return;
 
-    if (this.shouldFinishStep3) {
+    if (this.shouldFinishTiposStep) {
       void this.finish();
       return;
     }
 
-    const next = this.getNextEstablecimientoStep3();
+    const next = this.getNextEstablecimientoTipos();
     if (!next) {
       void this.finish();
       return;
     }
 
-    this.selectedEstablecimientoStep3 = next;
-    this.onStep3EstablecimientoChange();
+    this.selectedEstablecimientoTipos = next;
+    this.onTiposEstablecimientoChange();
   }
 
   prevStep(): void {
@@ -220,8 +233,8 @@ export class WizardComponent implements OnInit {
     this.wizardState.tiposDeHoraPorEstablecimiento = nextMap;
     this.tiposDeHoraPorEstablecimientoValid = nextValid;
 
-    if (!values.includes(this.selectedEstablecimientoStep3)) {
-      this.selectedEstablecimientoStep3 = values[0] || '';
+    if (!values.includes(this.selectedEstablecimientoTipos)) {
+      this.selectedEstablecimientoTipos = values[0] || '';
     }
   }
 
@@ -230,28 +243,28 @@ export class WizardComponent implements OnInit {
   }
 
   onTiposDeHoraChange(values: string[]): void {
-    if (this.switchingStep3Establecimiento) return;
-    if (!this.selectedEstablecimientoStep3) return;
+    if (this.switchingTiposEstablecimiento) return;
+    if (!this.selectedEstablecimientoTipos) return;
     this.wizardState.tiposDeHoraPorEstablecimiento = {
       ...this.wizardState.tiposDeHoraPorEstablecimiento,
-      [this.selectedEstablecimientoStep3]: values
+      [this.selectedEstablecimientoTipos]: values
     };
   }
 
   onTiposDeHoraValidityChange(valid: boolean): void {
-    if (!this.selectedEstablecimientoStep3) return;
-    const tipos = this.wizardState.tiposDeHoraPorEstablecimiento[this.selectedEstablecimientoStep3] || [];
+    if (!this.selectedEstablecimientoTipos) return;
+    const tipos = this.wizardState.tiposDeHoraPorEstablecimiento[this.selectedEstablecimientoTipos] || [];
     this.tiposDeHoraPorEstablecimientoValid = {
       ...this.tiposDeHoraPorEstablecimientoValid,
-      [this.selectedEstablecimientoStep3]: valid && tipos.length > 0
+      [this.selectedEstablecimientoTipos]: valid && tipos.length > 0
     };
   }
 
-  onStep3EstablecimientoChange(): void {
-    this.switchingStep3Establecimiento = true;
-    const est = this.selectedEstablecimientoStep3;
+  onTiposEstablecimientoChange(): void {
+    this.switchingTiposEstablecimiento = true;
+    const est = this.selectedEstablecimientoTipos;
     if (!est) {
-      this.switchingStep3Establecimiento = false;
+      this.switchingTiposEstablecimiento = false;
       return;
     }
     if (!this.wizardState.tiposDeHoraPorEstablecimiento[est]) {
@@ -260,13 +273,13 @@ export class WizardComponent implements OnInit {
     const tipos = this.wizardState.tiposDeHoraPorEstablecimiento[est] || [];
     this.tiposDeHoraPorEstablecimientoValid[est] = this.isTiposListValid(tipos);
     setTimeout(() => {
-      this.switchingStep3Establecimiento = false;
+      this.switchingTiposEstablecimiento = false;
     });
   }
 
   getTiposDeHoraForSelectedEstablecimiento(): string[] {
-    if (!this.selectedEstablecimientoStep3) return [];
-    return this.wizardState.tiposDeHoraPorEstablecimiento[this.selectedEstablecimientoStep3] || [];
+    if (!this.selectedEstablecimientoTipos) return [];
+    return this.wizardState.tiposDeHoraPorEstablecimiento[this.selectedEstablecimientoTipos] || [];
   }
 
   private isTiposListValid(tipos: string[]): boolean {
@@ -274,7 +287,7 @@ export class WizardComponent implements OnInit {
   }
 
   async finish(): Promise<void> {
-    if (this.canProceedStep3()) {
+    if (this.canProceedStep4()) {
       await this.userService.completeOnboarding(this.wizardState);
       await this.modalController.dismiss({ completed: true });
     }

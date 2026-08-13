@@ -1,5 +1,8 @@
+import { ProfessionalAreaId } from './professional-area.model';
+
 export interface User {
   nombre: string;
+  areaProfesional?: ProfessionalAreaId | string;
   establecimientos: string[];
   tiposDeHoraPorEstablecimiento: { [establecimiento: string]: string[] };
   // Campo legacy para migración de datos existentes
@@ -10,6 +13,7 @@ export interface User {
 
 export interface WizardState {
   nombre: string;
+  areaProfesional?: ProfessionalAreaId;
   establecimientos: string[];
   tiposDeHoraPorEstablecimiento: { [establecimiento: string]: string[] };
 }

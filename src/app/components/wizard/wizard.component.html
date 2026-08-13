@@ -19,7 +19,7 @@
 
   <div class="wizard-body">
     <!-- STEP 1: Nombre -->
-    @if (currentStep === 1) {
+    @if (currentStep === steps.name) {
       <div class="step-container fade-in">
         <div class="step-icon">
           <ion-icon name="person-outline"></ion-icon>
@@ -47,8 +47,37 @@
       </div>
     }
 
-    <!-- STEP 2: Establecimientos -->
-    @if (currentStep === 2) {
+    <!-- STEP 2: Área profesional -->
+    @if (currentStep === steps.area) {
+      <div class="step-container fade-in">
+        <div class="step-icon">
+          <ion-icon name="briefcase-outline"></ion-icon>
+        </div>
+        <h2 class="step-title">¿Cuál es tu área?</h2>
+        <p class="step-subtitle">Elegí una opción para personalizar la app</p>
+
+        <div class="area-options" role="listbox" aria-label="Área profesional">
+          @for (area of professionalAreas; track area.id) {
+            <button
+              type="button"
+              class="area-option"
+              role="option"
+              [attr.aria-selected]="wizardState.areaProfesional === area.id"
+              [class.selected]="wizardState.areaProfesional === area.id"
+              (click)="selectArea(area.id)"
+            >
+              <span class="area-option-label">{{ area.displayName }}</span>
+              @if (wizardState.areaProfesional === area.id) {
+                <ion-icon name="checkmark-outline"></ion-icon>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- STEP 3: Establecimientos -->
+    @if (currentStep === steps.establecimientos) {
       <div class="step-container fade-in">
         <div class="step-icon">
           <ion-icon name="business-outline"></ion-icon>
@@ -67,8 +96,8 @@
       </div>
     }
 
-    <!-- STEP 3: Tipos de horas -->
-    @if (currentStep === 3) {
+    <!-- STEP 4: Tipos de horas -->
+    @if (currentStep === steps.tiposHora) {
       <div class="step-container fade-in">
         <div class="step-icon">
           <ion-icon name="time-outline"></ion-icon>
@@ -77,8 +106,8 @@
 
         <ion-item lines="none" class="step3-select-item">
           <ion-select
-            [(ngModel)]="selectedEstablecimientoStep3"
-            (ionChange)="onStep3EstablecimientoChange()"
+            [(ngModel)]="selectedEstablecimientoTipos"
+            (ionChange)="onTiposEstablecimientoChange()"
             placeholder="Seleccionar establecimiento"
             toggleIcon="chevron-down-outline"
             expandedIcon="chevron-down-outline"
@@ -91,9 +120,9 @@
           </ion-select>
         </ion-item>
         
-        @for (est of [selectedEstablecimientoStep3]; track est) {
+        @for (est of [selectedEstablecimientoTipos]; track est) {
           <app-dynamic-list-input
-            [title]="'Defina los tipos de horas para ' + selectedEstablecimientoStep3 + ', ej: Horas extras'"
+            [title]="'Defina los tipos de horas para ' + selectedEstablecimientoTipos + ', ej: Horas extras'"
             placeholder="Tipo de hora"
             [minLength]="3"
             [maxLength]="50"
@@ -127,19 +156,23 @@
       <ion-button
         fill="solid"
         color="primary"
-        [disabled]="(currentStep === 1 && !canProceedStep1()) || (currentStep === 2 && !canProceedStep2())"
+        [disabled]="
+          (currentStep === steps.name && !canProceedStep1()) ||
+          (currentStep === steps.area && !canProceedStep2()) ||
+          (currentStep === steps.establecimientos && !canProceedStep3())
+        "
         (click)="nextStep()"
         class="nav-btn"
       >
         Siguiente
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-button>
-    } @else if (shouldFinishStep3) {
+    } @else if (shouldFinishTiposStep) {
       <ion-button
         fill="solid"
         color="success"
-        [disabled]="!canProceedCurrentEstablecimientoStep3()"
-        (click)="onStep3PrimaryAction()"
+        [disabled]="!canProceedCurrentEstablecimientoTipos()"
+        (click)="onTiposStepPrimaryAction()"
         class="nav-btn finish-btn"
       >
         <ion-icon name="checkmark-outline" slot="start"></ion-icon>
@@ -149,8 +182,8 @@
       <ion-button
         fill="solid"
         color="primary"
-        [disabled]="!canProceedCurrentEstablecimientoStep3()"
-        (click)="onStep3PrimaryAction()"
+        [disabled]="!canProceedCurrentEstablecimientoTipos()"
+        (click)="onTiposStepPrimaryAction()"
         class="nav-btn"
       >
         Siguiente

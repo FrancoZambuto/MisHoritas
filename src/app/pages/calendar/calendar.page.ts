@@ -15,7 +15,8 @@ import {
   IonList,
   IonItem,
   ModalController,
-  MenuController
+  MenuController,
+  AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -27,11 +28,19 @@ import {
   calculatorOutline,
   analyticsOutline,
   checkmarkCircle,
-  addCircleOutline
+  addCircleOutline,
+  briefcaseOutline
 } from 'ionicons/icons';
 import { UserService, HoursService } from '../../services';
 import { DayModalComponent, AddItemModalComponent, AddItemType } from '../../components';
-import { HoursEntries, HourEntry } from '../../models';
+import {
+  HoursEntries,
+  HourEntry,
+  PROFESSIONAL_AREAS,
+  ProfessionalAreaId,
+  GENERIC_BRANDING_ASSET,
+  resolveHeaderAsset
+} from '../../models';
 
 type ViewMode = 'day' | 'week' | 'month';
 
@@ -73,12 +82,15 @@ export class CalendarPage implements OnInit, OnDestroy {
   weekDays: string[] = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   userName: string = '';
   hoursEntries: HoursEntries = {};
+  headerAsset: string = GENERIC_BRANDING_ASSET;
   
   private hoursSub?: Subscription;
+  private userSub?: Subscription;
 
   constructor(
     private modalController: ModalController,
     private menuController: MenuController,
+    private alertController: AlertController,
     private router: Router,
     private userService: UserService,
     private hoursService: HoursService
@@ -92,12 +104,16 @@ export class CalendarPage implements OnInit, OnDestroy {
       calculatorOutline,
       analyticsOutline,
       checkmarkCircle,
-      addCircleOutline
+      addCircleOutline,
+      briefcaseOutline
     });
   }
 
   async ngOnInit(): Promise<void> {
-    this.userName = this.userService.getNombre();
+    this.userSub = this.userService.user$.subscribe(user => {
+      this.userName = user.nombre;
+      this.headerAsset = resolveHeaderAsset(user.areaProfesional);
+    });
     
     this.hoursSub = this.hoursService.hours$.subscribe(hours => {
       this.hoursEntries = hours;
@@ -109,6 +125,7 @@ export class CalendarPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.hoursSub?.unsubscribe();
+    this.userSub?.unsubscribe();
   }
 
   get currentMonthYear(): string {
@@ -342,6 +359,34 @@ export class CalendarPage implements OnInit, OnDestroy {
     
     await modal.present();
     await modal.onDidDismiss();
+  }
+
+  async changeProfessionalArea(): Promise<void> {
+    await this.menuController.close();
+
+    const currentArea = this.userService.getAreaProfesional();
+    const alert = await this.alertController.create({
+      header: '¿Cuál es tu área?',
+      inputs: PROFESSIONAL_AREAS.map((area) => ({
+        type: 'radio' as const,
+        label: area.displayName,
+        value: area.id,
+        checked: area.id === currentArea
+      })),
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Guardar',
+          handler: (value: ProfessionalAreaId) => {
+            if (!value) return false;
+            void this.userService.updateAreaProfesional(value);
+            return true;
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   async goToBilling(): Promise<void> {

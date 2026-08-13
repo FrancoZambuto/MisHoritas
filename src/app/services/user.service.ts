@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { StorageService, StorageKeys } from './storage.service';
-import { User, DEFAULT_USER, WizardState, ESTABLECIMIENTO_COLORS } from '../models';
+import {
+  User,
+  DEFAULT_USER,
+  WizardState,
+  ESTABLECIMIENTO_COLORS,
+  ProfessionalAreaId,
+  DEFAULT_EXISTING_USER_AREA,
+  hasProfessionalAreaSelection
+} from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +26,8 @@ export class UserService {
 
     this.userSubject.next(currentUser);
 
-    // Persistir migración automáticamente si faltaban campos nuevos
-    if (JSON.stringify(user) !== JSON.stringify(currentUser)) {
+    // Persistir migración automáticamente si ya había un usuario y faltaban campos nuevos
+    if (user && JSON.stringify(user) !== JSON.stringify(currentUser)) {
       await this.saveUser(currentUser);
     }
 
@@ -36,6 +44,7 @@ export class UserService {
 
     const user: User = {
       nombre: wizardState.nombre,
+      areaProfesional: wizardState.areaProfesional,
       establecimientos: wizardState.establecimientos,
       tiposDeHoraPorEstablecimiento: wizardState.tiposDeHoraPorEstablecimiento,
       establecimientoColors: colors,
@@ -105,6 +114,20 @@ export class UserService {
 
   getNombre(): string {
     return this.userSubject.getValue().nombre;
+  }
+
+  getAreaProfesional(): string | undefined {
+    return this.userSubject.getValue().areaProfesional;
+  }
+
+  async updateAreaProfesional(areaProfesional: ProfessionalAreaId): Promise<void> {
+    const user = this.userSubject.getValue();
+    if (user.areaProfesional === areaProfesional) return;
+
+    await this.saveUser({
+      ...user,
+      areaProfesional
+    });
   }
 
   getEstablecimientoColor(establecimiento: string): string {
@@ -185,8 +208,21 @@ export class UserService {
       establecimientoColors: this.assignColorsToEstablecimientos(
         user.establecimientos,
         user.establecimientoColors || {}
-      )
+      ),
+      areaProfesional: this.migrateAreaProfesional(user)
     };
+  }
+
+  private migrateAreaProfesional(user: User): string | undefined {
+    if (hasProfessionalAreaSelection(user.areaProfesional)) {
+      return user.areaProfesional;
+    }
+
+    if (user.isOnboarded) {
+      return DEFAULT_EXISTING_USER_AREA;
+    }
+
+    return user.areaProfesional;
   }
 
   private assignColorsToEstablecimientos(

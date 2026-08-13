@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
 import { UserService, HoursService, BillingService } from '../../services';
+import { resolveStartupAsset } from '../../models';
 
 @Component({
   selector: 'app-splash',
@@ -13,6 +14,8 @@ import { UserService, HoursService, BillingService } from '../../services';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SplashPage implements OnInit {
+  startupAsset: string | null = null;
+
   constructor(
     private router: Router,
     private userService: UserService,
@@ -25,8 +28,10 @@ export class SplashPage implements OnInit {
   }
 
   private async initializeApp(): Promise<void> {
+    const user = await this.userService.loadUser();
+    this.startupAsset = resolveStartupAsset(user.areaProfesional);
+
     await Promise.all([
-      this.userService.loadUser(),
       this.hoursService.loadHours(),
       this.billingService.loadValores(),
       this.billingService.loadSnapshots(),
@@ -34,8 +39,7 @@ export class SplashPage implements OnInit {
       new Promise(resolve => setTimeout(resolve, 3000))
     ]);
 
-    const isOnboarded = await this.userService.isOnboarded();
-    if (isOnboarded) {
+    if (user.isOnboarded) {
       await this.router.navigate(['/calendar'], { replaceUrl: true });
     } else {
       await this.router.navigate(['/onboarding'], { replaceUrl: true });
