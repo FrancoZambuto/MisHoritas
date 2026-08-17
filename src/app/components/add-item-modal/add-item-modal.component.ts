@@ -22,6 +22,7 @@ import {
   checkmarkOutline
 } from 'ionicons/icons';
 import { UserService } from '../../services';
+import { I18nService, TranslatePipe } from '../../services/i18n.service';
 import { DynamicListInputComponent } from '../dynamic-list-input/dynamic-list-input.component';
 
 export type AddItemType = 'establecimiento' | 'tipoHora';
@@ -32,8 +33,9 @@ export type AddItemType = 'establecimiento' | 'tipoHora';
   styleUrls: ['./add-item-modal.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
+    TranslatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -61,7 +63,8 @@ export class AddItemModalComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    public userService: UserService
+    public userService: UserService,
+    private i18n: I18nService
   ) {
     addIcons({ 
       close, 
@@ -96,21 +99,24 @@ export class AddItemModalComponent implements OnInit {
   }
 
   get title(): string {
-    return this.itemType === 'establecimiento' 
-      ? 'Tus lugares de trabajo' 
-      : 'Tipos de horas';
+    return this.itemType === 'establecimiento'
+      ? this.i18n.t('add_item.establishments_title')
+      : this.i18n.t('add_item.hour_types_title');
   }
 
   get subtitle(): string {
-    return this.itemType === 'establecimiento'
-      ? 'Ingrese el establecimiento, ej: Sanatorio Privado Argentino'
-      : `Defina los tipos de horas para ${this.selectedEstablecimiento || 'el establecimiento'}`;
+    if (this.itemType === 'establecimiento') {
+      return this.i18n.t('add_item.establishments_input_title');
+    }
+    return this.selectedEstablecimiento
+      ? this.i18n.t('add_item.hour_types_input_title', { name: this.selectedEstablecimiento })
+      : this.i18n.t('add_item.hour_types_input_title_default');
   }
 
   get placeholder(): string {
     return this.itemType === 'establecimiento'
-      ? 'Nombre del establecimiento'
-      : 'Tipo de hora';
+      ? this.i18n.t('add_item.establishments_placeholder')
+      : this.i18n.t('add_item.hour_types_placeholder');
   }
 
   get icon(): string {

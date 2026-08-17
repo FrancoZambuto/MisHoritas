@@ -25,9 +25,9 @@
         <ion-select
           [(ngModel)]="selectedEstablecimiento"
           (ionChange)="onEstablecimientoChange()"
-          placeholder="Seleccionar establecimiento"
+          [placeholder]="'day_modal.select_establishment' | translate"
           interface="action-sheet"
-          [interfaceOptions]="{ header: 'Establecimiento' }"
+          [interfaceOptions]="{ header: ('day_modal.establishment_header' | translate) }"
         >
           @for (est of establecimientos; track est) {
             <ion-select-option [value]="est">{{ est }}</ion-select-option>
@@ -60,6 +60,6 @@
     class="save-btn"
   >
     <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-    Guardar cambios
+    {{ 'common.save_changes' | translate }}
   </ion-button>
 </ion-footer>

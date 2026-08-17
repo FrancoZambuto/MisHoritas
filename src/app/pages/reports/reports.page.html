@@ -5,7 +5,7 @@
         <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Reportes</ion-title>
+    <ion-title>{{ 'reports.title' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -16,7 +16,7 @@
         [(ngModel)]="selectedPeriodId"
         (ionChange)="onPeriodChange()"
         interface="action-sheet"
-        [interfaceOptions]="{ header: 'Período' }"
+        [interfaceOptions]="{ header: ('reports.period' | translate) }"
       >
         @for (option of periodOptions; track option.id) {
           <ion-select-option [value]="option.id">{{ option.label }}</ion-select-option>
@@ -28,15 +28,15 @@
   @if (loading) {
     <div class="empty-state">
       <ion-icon name="analytics-outline"></ion-icon>
-      <p>Cargando reportes...</p>
+      <p>{{ 'reports.loading' | translate }}</p>
     </div>
   } @else if (!report?.hasConfirmedData) {
     <div class="empty-state">
       <ion-icon name="warning-outline"></ion-icon>
-      <p>Todavía no hay datos financieros para este período.</p>
-      <p class="empty-hint">Los reportes usan solo meses con facturación confirmada.</p>
+      <p>{{ 'reports.no_data' | translate }}</p>
+      <p class="empty-hint">{{ 'reports.no_data_hint' | translate }}</p>
       <ion-button expand="block" color="primary" (click)="goToBilling()" class="empty-cta">
-        Ir a facturación
+        {{ 'reports.go_to_billing' | translate }}
       </ion-button>
     </div>
   } @else if (report) {
@@ -47,7 +47,7 @@
       <div class="kpi-card kpi-card--accent">
         <div class="kpi-icon"><ion-icon name="cash-outline"></ion-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Facturado</span>
+          <span class="kpi-label">{{ 'reports.billed' | translate }}</span>
           <span class="kpi-value">{{ formatCurrency(report.summary.totalRevenue) }}</span>
           @if (comparisonText) {
             <span class="kpi-delta" [class.kpi-delta--up]="comparisonPositive" [class.kpi-delta--down]="!comparisonPositive">
@@ -60,7 +60,7 @@
       <div class="kpi-card">
         <div class="kpi-icon"><ion-icon name="time-outline"></ion-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Horas facturadas</span>
+          <span class="kpi-label">{{ 'reports.billed_hours' | translate }}</span>
           <span class="kpi-value">{{ formatHours(report.summary.totalHours) }}</span>
         </div>
       </div>
@@ -68,16 +68,16 @@
       <div class="kpi-card">
         <div class="kpi-icon"><ion-icon name="trending-up-outline"></ion-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Promedio / hora</span>
+          <span class="kpi-label">{{ 'reports.avg_per_hour' | translate }}</span>
           <span class="kpi-value">{{ formatRate(report.summary.averageHourlyRate) }}</span>
-          <span class="kpi-note">Solo ingresos por horas</span>
+          <span class="kpi-note">{{ 'reports.hourly_only' | translate }}</span>
         </div>
       </div>
 
       <div class="kpi-card">
         <div class="kpi-icon"><ion-icon name="business-outline"></ion-icon></div>
         <div class="kpi-body">
-          <span class="kpi-label">Establecimientos</span>
+          <span class="kpi-label">{{ 'reports.establishments' | translate }}</span>
           <span class="kpi-value">{{ report.summary.establishmentsCount }}</span>
         </div>
       </div>
@@ -85,11 +85,11 @@
 
     @if (report.period.isMultiMonth && report.summary.yearLabel != null) {
       <div class="highlight-card">
-        <div class="highlight-title">Facturado en {{ report.summary.yearLabel }}</div>
+        <div class="highlight-title">{{ 'reports.billed_in' | translate:{ year: report.summary.yearLabel } }}</div>
         <div class="highlight-value">{{ formatCurrency(report.summary.totalRevenue) }}</div>
         @if (report.summary.monthlyAverageRevenue != null) {
           <div class="highlight-sub">
-            Promedio mensual: {{ formatCurrency(report.summary.monthlyAverageRevenue) }}
+            {{ 'reports.monthly_avg' | translate }} {{ formatCurrency(report.summary.monthlyAverageRevenue) }}
           </div>
         }
       </div>
@@ -101,7 +101,7 @@
           <div class="insight-card">
             <ion-icon name="calendar-outline"></ion-icon>
             <div>
-              <div class="insight-label">Mejor mes</div>
+              <div class="insight-label">{{ 'reports.best_month' | translate }}</div>
               <div class="insight-title">{{ report.summary.bestMonth.label }}</div>
               <div class="insight-value">{{ formatCurrency(report.summary.bestMonth.revenue) }}</div>
             </div>
@@ -111,7 +111,7 @@
           <div class="insight-card">
             <ion-icon name="trophy-outline"></ion-icon>
             <div>
-              <div class="insight-label">Mayor ingreso por hora</div>
+              <div class="insight-label">{{ 'reports.best_rate' | translate }}</div>
               <div class="insight-title">{{ report.summary.bestEstablishmentByRate.name }}</div>
               <div class="insight-value">{{ formatRate(report.summary.bestEstablishmentByRate.averageRate) }}</div>
             </div>
@@ -122,7 +122,7 @@
 
     <!-- Evolution -->
     @if (report.period.isMultiMonth) {
-      <div class="section-title">Evolución del facturado</div>
+      <div class="section-title">{{ 'reports.revenue_evolution' | translate }}</div>
       <div class="chart-card">
         <div class="chart-wrap chart-wrap--line">
           <canvas #evolutionCanvas></canvas>
@@ -131,7 +131,7 @@
     }
 
     <!-- By establishment -->
-    <div class="section-title">Ingresos por establecimiento</div>
+    <div class="section-title">{{ 'reports.revenue_by_establishment' | translate }}</div>
     <div class="chart-card">
       <div class="chart-wrap" [style.height.px]="establishmentChartHeight">
         <canvas #establishmentCanvas></canvas>
@@ -150,7 +150,7 @@
     </div>
 
     <!-- By hour type -->
-    <div class="section-title">Ingresos por tipo de hora</div>
+    <div class="section-title">{{ 'reports.revenue_by_hour_type' | translate }}</div>
     <div class="chart-card">
       @if (showDoughnut) {
         <div class="chart-wrap chart-wrap--doughnut">
@@ -163,7 +163,7 @@
             <div class="list-main">
               <span class="list-name">{{ item.name }}</span>
               <span class="list-meta">
-                {{ formatHours(item.hours) }} · {{ formatPercent(item.percentage) }} del ingreso por horas
+                {{ formatHours(item.hours) }} · {{ formatPercent(item.percentage) }} {{ 'reports.of_hourly_revenue' | translate }}
               </span>
             </div>
             <span class="list-amount">{{ formatCurrency(item.revenue) }}</span>
@@ -172,18 +172,18 @@
       </div>
     </div>
 
-    <div class="section-title">Ingresos por origen</div>
+    <div class="section-title">{{ 'reports.revenue_by_source' | translate }}</div>
     <div class="chart-card">
       <div class="list-block">
         <div class="list-row">
           <div class="list-main">
-            <span class="list-name">Horas</span>
+            <span class="list-name">{{ 'common.hours' | translate }}</span>
           </div>
           <span class="list-amount">{{ formatCurrency(report.summary.hourlyRevenue) }}</span>
         </div>
         <div class="list-row">
           <div class="list-main">
-            <span class="list-name">Adicionales</span>
+            <span class="list-name">{{ 'common.additionals' | translate }}</span>
           </div>
           <span class="list-amount">{{ formatCurrency(report.summary.adicionalesRevenue) }}</span>
         </div>
@@ -191,14 +191,14 @@
     </div>
 
     @if (report.byAdicional.length > 0) {
-      <div class="section-title">Adicionales</div>
+      <div class="section-title">{{ 'common.additionals' | translate }}</div>
       <div class="chart-card">
         <div class="list-block">
           @for (item of report.byAdicional; track item.name) {
             <div class="list-row">
               <div class="list-main">
                 <span class="list-name">{{ item.name }}</span>
-                <span class="list-meta">{{ formatPercent(item.percentage) }} de adicionales</span>
+                <span class="list-meta">{{ formatPercent(item.percentage) }} {{ 'reports.of_additionals' | translate }}</span>
               </div>
               <span class="list-amount">{{ formatCurrency(item.revenue) }}</span>
             </div>
@@ -208,7 +208,7 @@
     }
 
     <!-- Efficiency -->
-    <div class="section-title">Horas vs ingreso</div>
+    <div class="section-title">{{ 'reports.hours_vs_revenue' | translate }}</div>
     <div class="chart-card">
       <div class="list-block">
         @for (item of report.efficiencyByEstablishment; track item.name) {
@@ -217,7 +217,7 @@
             <div class="efficiency-metrics">
               <span>{{ formatHours(item.hours) }}</span>
               <span>{{ formatCurrency(item.revenue) }}</span>
-              <span class="efficiency-rate">{{ formatRate(item.averageRate) }} promedio</span>
+              <span class="efficiency-rate">{{ formatRate(item.averageRate) }} {{ 'reports.average' | translate }}</span>
             </div>
           </div>
         }
@@ -226,14 +226,14 @@
 
     <!-- Rate evolution -->
     @if (rateOptions.length > 0) {
-      <div class="section-title">Evolución de tarifas</div>
+      <div class="section-title">{{ 'reports.rate_evolution' | translate }}</div>
       <div class="chart-card">
         <ion-item lines="none" class="select-item nested-select">
           <ion-select
             [(ngModel)]="selectedRateKey"
             (ionChange)="onRateSeriesChange()"
             interface="action-sheet"
-            [interfaceOptions]="{ header: 'Tarifa' }"
+            [interfaceOptions]="{ header: ('reports.rate' | translate) }"
           >
             @for (option of rateOptions; track option.label) {
               <ion-select-option [value]="option.establecimiento + ':::' + option.tipoHora">
@@ -245,7 +245,7 @@
         <div class="chart-wrap chart-wrap--line">
           <canvas #rateCanvas></canvas>
         </div>
-        <p class="rate-hint">Solo tarifas usadas en cálculos confirmados.</p>
+        <p class="rate-hint">{{ 'reports.rate_hint' | translate }}</p>
       </div>
     }
   }

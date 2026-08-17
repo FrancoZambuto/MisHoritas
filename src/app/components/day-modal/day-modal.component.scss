@@ -1,12 +1,13 @@
+// ── Header ──
 .modal-header {
   ion-toolbar {
     --background: var(--ion-color-light);
     --border-width: 0;
   }
-  
+
   ion-title {
     font-weight: 600;
-    font-size: 1rem;
+    font-size: var(--text-base);
   }
 }
 
@@ -17,12 +18,12 @@
   --padding-top: 16px;
 }
 
+// ── Entry cards ──
 .entry-card {
   background: var(--hb-surface);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
 }
 
 .entry-header {
@@ -35,47 +36,54 @@
 .select-item,
 .input-item {
   --background: var(--hb-input-bg);
-  --border-radius: 12px;
-  --padding-start: 16px;
-  --padding-end: 16px;
+  --border-radius: var(--radius-md);
+  --padding-start: 14px;
+  --padding-end: 14px;
   margin-bottom: 8px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 
   ion-select,
   ion-input {
-    --padding-top: 12px;
-    --padding-bottom: 12px;
-    font-size: 0.95rem;
+    --padding-top: 11px;
+    --padding-bottom: 11px;
+    font-size: var(--text-base);
   }
 }
 
 .field-error {
   color: var(--ion-color-danger);
-  font-size: 0.75rem;
-  margin: -4px 0 8px 16px;
+  font-size: var(--text-xs);
+  margin: -4px 0 8px 14px;
 }
 
 .add-entry-btn {
-  --border-radius: 12px;
-  margin: 8px 0 24px;
-  font-weight: 500;
+  --border-radius: var(--radius-md);
+  --background: transparent;
+  --border-width: 1.5px;
+  --border-style: solid;
+  --border-color: var(--ion-color-primary);
+  --color: var(--ion-color-primary);
+  margin: 8px 0 20px;
+  font-weight: 600;
+  font-size: var(--text-base);
 }
 
+// ── Total section ──
 .total-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: var(--hb-surface);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--hb-border);
+  transition: border-color 200ms ease;
 
   &.error {
-    background: #fff0f0;
-    border: 1px solid var(--ion-color-danger);
-    
+    background: rgba(var(--ion-color-danger-rgb), 0.06);
+    border-color: rgba(var(--ion-color-danger-rgb), 0.3);
+
     .total-value {
       color: var(--ion-color-danger);
     }
@@ -83,44 +91,53 @@
 }
 
 .total-label {
-  font-size: 0.95rem;
-  color: var(--ion-color-medium-shade);
+  font-size: var(--text-base);
+  color: var(--ion-color-medium);
 }
 
 .total-value {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--text-lg);
+  font-weight: 700;
   color: var(--ion-color-primary);
+  font-feature-settings: 'tnum';
 }
 
+// ── Error banner ──
 .error-banner {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--ion-color-danger);
-  color: white;
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-size: 0.9rem;
+  background: var(--hb-danger-bg);
+  color: var(--ion-color-danger);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  font-size: var(--text-sm);
   font-weight: 500;
 
   ion-icon {
-    font-size: 20px;
+    font-size: 18px;
+    flex-shrink: 0;
   }
 }
 
+// ── Footer ──
 .modal-footer {
   background: var(--ion-color-light);
-  border-top: none;
-  padding: 16px;
-  padding-bottom: calc(16px + var(--ion-safe-area-bottom, 0px));
+  border-top: 1px solid var(--hb-border);
+  padding: 14px 16px;
+  padding-bottom: calc(14px + var(--ion-safe-area-bottom, 0px));
 }
 
 .save-btn {
-  --border-radius: 14px;
-  --padding-top: 16px;
-  --padding-bottom: 16px;
+  --border-radius: var(--radius-md);
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  --background: transparent;
+  --border-width: 1.5px;
+  --border-style: solid;
+  --border-color: var(--ion-color-primary);
+  --color: var(--ion-color-primary);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }

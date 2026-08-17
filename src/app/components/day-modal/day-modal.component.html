@@ -33,9 +33,9 @@
             <ion-select
               formControlName="establecimiento"
               (ionChange)="onEstablecimientoChange(i)"
-              placeholder="Seleccionar establecimiento"
+              [placeholder]="'day_modal.select_establishment' | translate"
               interface="action-sheet"
-              [interfaceOptions]="{ header: 'Establecimiento' }"
+              [interfaceOptions]="{ header: ('day_modal.establishment_header' | translate) }"
             >
               @for (est of establecimientos; track est) {
                 <ion-select-option [value]="est">{{ est }}</ion-select-option>
@@ -43,15 +43,15 @@
             </ion-select>
           </ion-item>
           @if (getEntryError(i, 'establecimiento')) {
-            <div class="field-error">Seleccione un establecimiento</div>
+            <div class="field-error">{{ 'validation.select_establishment' | translate }}</div>
           }
 
           <ion-item lines="none" class="select-item">
             <ion-select
               formControlName="tipoHora"
-              placeholder="Seleccionar tipo de hora"
+              [placeholder]="'day_modal.select_hour_type' | translate"
               interface="action-sheet"
-              [interfaceOptions]="{ header: 'Tipo de hora' }"
+              [interfaceOptions]="{ header: ('day_modal.hour_type_header' | translate) }"
             >
               @for (tipo of getTiposDeHoraForEntry(i); track tipo) {
                 <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
@@ -59,7 +59,7 @@
             </ion-select>
           </ion-item>
           @if (getEntryError(i, 'tipoHora')) {
-            <div class="field-error">Seleccione un tipo de hora</div>
+            <div class="field-error">{{ 'validation.select_hour_type' | translate }}</div>
           }
 
           <ion-item lines="none" class="input-item">
@@ -69,11 +69,11 @@
               inputmode="decimal"
               step="0.5"
               min="0.01"
-              placeholder="Cantidad de horas"
+              [placeholder]="'day_modal.hours_amount' | translate"
             ></ion-input>
           </ion-item>
           @if (getEntryError(i, 'cantidad')) {
-            <div class="field-error">Ingrese una cantidad válida mayor a 0</div>
+            <div class="field-error">{{ 'validation.enter_valid_hours' | translate }}</div>
           }
         </div>
       }
@@ -87,19 +87,19 @@
       class="add-entry-btn"
     >
       <ion-icon name="add-outline" slot="start"></ion-icon>
-      Agregar otro registro
+      {{ 'day_modal.add_entry' | translate }}
     </ion-button>
   </form>
 
   <div class="total-section" [class.error]="exceedsMaxHours">
-    <span class="total-label">Total del día:</span>
-    <span class="total-value">{{ getTotalHours() | number:'1.1-2' }} / 24 horas</span>
+    <span class="total-label">{{ 'day_modal.day_total' | translate }}</span>
+    <span class="total-value">{{ getTotalHours() | number:'1.1-2' }} {{ 'day_modal.max_hours' | translate }}</span>
   </div>
-  
+
   @if (exceedsMaxHours) {
     <div class="error-banner">
       <ion-icon name="warning-outline"></ion-icon>
-      <span>El total no puede superar 24 horas</span>
+      <span>{{ 'day_modal.exceeds_max' | translate }}</span>
     </div>
   }
 </ion-content>
@@ -112,6 +112,6 @@
     class="save-btn"
   >
     <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-    Guardar
+    {{ 'common.save' | translate }}
   </ion-button>
 </ion-footer>

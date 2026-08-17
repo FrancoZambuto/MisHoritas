@@ -26,6 +26,7 @@ import {
   createAdicionalId,
   normalizeAdicional
 } from '../../models';
+import { I18nService, TranslatePipe } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-adicional-modal',
@@ -35,6 +36,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    TranslatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -62,7 +64,7 @@ export class AdicionalModalComponent implements OnInit {
 
   readonly SIN_ESTABLECIMIENTO = '';
 
-  constructor(private modalController: ModalController) {
+  constructor(private modalController: ModalController, private i18n: I18nService) {
     addIcons({ close, cashOutline, checkmarkOutline });
   }
 
@@ -76,7 +78,7 @@ export class AdicionalModalComponent implements OnInit {
   }
 
   get title(): string {
-    return this.adicional ? 'Editar adicional' : 'Agregar adicional';
+    return this.adicional ? this.i18n.t('adicional.edit_title') : this.i18n.t('adicional.add_title');
   }
 
   get canSave(): boolean {
@@ -98,7 +100,7 @@ export class AdicionalModalComponent implements OnInit {
     });
 
     if (!normalized) {
-      this.errorMessage = 'Completá un concepto y un monto mayor a 0.';
+      this.errorMessage = this.i18n.t('validation.complete_concept_amount');
       return;
     }
 

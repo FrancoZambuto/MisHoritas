@@ -1,7 +1,7 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { 
+import {
   IonHeader,
   IonToolbar,
   IonTitle,
@@ -13,10 +13,10 @@ import {
   IonInput,
   IonSelect,
   IonSelectOption,
-  ModalController 
+  ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
+import {
   close,
   personOutline,
   briefcaseOutline,
@@ -25,10 +25,12 @@ import {
   chevronDownOutline,
   chevronBackOutline,
   chevronForwardOutline,
-  checkmarkOutline
+  checkmarkOutline,
+  languageOutline
 } from 'ionicons/icons';
 import { DynamicListInputComponent } from '../dynamic-list-input/dynamic-list-input.component';
 import { UserService } from '../../services';
+import { I18nService, AppLanguage, TranslatePipe } from '../../services/i18n.service';
 import {
   WizardState,
   ProfessionalAreaId,
@@ -42,9 +44,10 @@ import {
   styleUrls: ['./wizard.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -62,20 +65,22 @@ import {
 })
 export class WizardComponent implements OnInit {
   readonly steps = {
-    name: 1,
-    area: 2,
-    establecimientos: 3,
-    tiposHora: 4
+    language: 1,
+    name: 2,
+    area: 3,
+    establecimientos: 4,
+    tiposHora: 5
   } as const;
 
-  currentStep: number = this.steps.name;
+  currentStep: number = this.steps.language;
   totalSteps: number = this.steps.tiposHora;
   readonly professionalAreas = PROFESSIONAL_AREAS;
-  
+
   nombreForm!: FormGroup;
-  
+
   wizardState: WizardState = {
     nombre: '',
+    idioma: 'es',
     establecimientos: [],
     tiposDeHoraPorEstablecimiento: {}
   };
@@ -88,9 +93,10 @@ export class WizardComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalController: ModalController,
-    private userService: UserService
+    private userService: UserService,
+    private i18nService: I18nService
   ) {
-    addIcons({ 
+    addIcons({
       close,
       personOutline,
       briefcaseOutline,
@@ -99,7 +105,8 @@ export class WizardComponent implements OnInit {
       chevronDownOutline,
       chevronBackOutline,
       chevronForwardOutline,
-      checkmarkOutline
+      checkmarkOutline,
+      languageOutline
     });
   }
 
@@ -121,10 +128,10 @@ export class WizardComponent implements OnInit {
   get nombreErrorMessage(): string {
     const control = this.nombreForm.get('nombre');
     if (control?.hasError('required')) {
-      return 'El nombre es requerido';
+      return this.i18nService.t('validation.name_required');
     }
     if (control?.hasError('minlength') || control?.hasError('maxlength')) {
-      return 'Nombre inválido, ingrese entre 3 y 25 caracteres';
+      return this.i18nService.t('validation.name_invalid');
     }
     return '';
   }
@@ -154,6 +161,11 @@ export class WizardComponent implements OnInit {
     return this.canProceedCurrentEstablecimientoTipos() && this.canProceedStep4();
   }
 
+  selectLanguage(lang: AppLanguage): void {
+    this.wizardState.idioma = lang;
+    void this.i18nService.setLanguage(lang);
+  }
+
   selectArea(areaId: ProfessionalAreaId): void {
     this.wizardState.areaProfesional = areaId;
   }
@@ -180,11 +192,15 @@ export class WizardComponent implements OnInit {
     return null;
   }
 
+  canProceedLanguage(): boolean {
+    return !!this.wizardState.idioma;
+  }
+
   nextStep(): void {
     if (this.currentStep === this.steps.name) {
       this.wizardState.nombre = this.nombreForm.get('nombre')?.value?.trim();
     }
-    
+
     if (this.currentStep < this.totalSteps) {
       this.currentStep++;
       if (this.currentStep === this.steps.tiposHora) {

@@ -9,6 +9,7 @@ import {
 import { addIcons } from 'ionicons';
 import { trashOutline, addOutline } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
+import { I18nService, TranslatePipe } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-dynamic-list-input',
@@ -16,9 +17,10 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./dynamic-list-input.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslatePipe,
     IonItem,
     IonInput,
     IonButton
@@ -37,7 +39,7 @@ export class DynamicListInputComponent implements OnInit, OnChanges, OnDestroy {
   form!: FormGroup;
   private formSubscription?: Subscription;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private i18n: I18nService) {
     addIcons({ trashOutline, addOutline });
   }
 
@@ -136,10 +138,10 @@ export class DynamicListInputComponent implements OnInit, OnChanges, OnDestroy {
   getErrorMessage(index: number): string {
     const control = this.items.at(index);
     if (control.hasError('required')) {
-      return 'Este campo es requerido';
+      return this.i18n.t('validation.field_required');
     }
     if (control.hasError('minlength') || control.hasError('maxlength')) {
-      return `Debe tener entre ${this.minLength} y ${this.maxLength} caracteres`;
+      return this.i18n.t('validation.field_length', { min: this.minLength, max: this.maxLength });
     }
     return '';
   }

@@ -12,11 +12,23 @@
 }
 
 .logo-container {
-  width: min(92vw, 560px);
-  height: min(70vh, 420px);
+  width: min(86vw, 480px);
+  height: min(65vh, 380px);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--hb-accent-tint-bg) 0%, transparent 70%);
+    filter: blur(40px);
+    z-index: 0;
+  }
 
   &.ready {
     animation: logoFadeInOut 3s ease-in-out forwards;
@@ -29,13 +41,23 @@
   width: auto;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 8px 22px rgba(124, 106, 232, 0.25));
+  position: relative;
+  z-index: 1;
+}
+
+.accent-bar {
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ion-color-primary);
+  opacity: 0.5;
+  margin-top: 16px;
 }
 
 @keyframes logoFadeInOut {
   0% {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.95);
   }
   20% {
     opacity: 1;
@@ -47,6 +69,6 @@
   }
   100% {
     opacity: 0;
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
 }

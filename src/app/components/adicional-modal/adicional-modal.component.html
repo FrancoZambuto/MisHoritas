@@ -15,13 +15,13 @@
       <ion-icon name="cash-outline"></ion-icon>
     </div>
     <h2 class="step-title">{{ title }}</h2>
-    <p class="step-subtitle">Monto fijo independiente de las horas trabajadas</p>
+    <p class="step-subtitle">{{ 'adicional.subtitle' | translate }}</p>
 
-    <label class="field-label">Concepto</label>
+    <label class="field-label">{{ 'adicional.concept' | translate }}</label>
     <ion-item lines="none" class="input-item">
       <ion-input
         [(ngModel)]="concepto"
-        placeholder="Ej: Viáticos"
+        [placeholder]="'adicional.concept_placeholder' | translate"
         maxlength="50"
         (ionInput)="errorMessage = ''"
       ></ion-input>
@@ -42,7 +42,7 @@
       </div>
     }
 
-    <label class="field-label">Monto</label>
+    <label class="field-label">{{ 'adicional.amount' | translate }}</label>
     <ion-item lines="none" class="input-item">
       <ion-input
         type="number"
@@ -55,26 +55,26 @@
       </ion-input>
     </ion-item>
 
-    <label class="field-label">Establecimiento</label>
+    <label class="field-label">{{ 'adicional.establishment' | translate }}</label>
     <ion-item lines="none" class="input-item">
       <ion-select
         [(ngModel)]="establecimiento"
-        placeholder="Sin establecimiento"
+        [placeholder]="'common.no_establishment' | translate"
         interface="action-sheet"
-        [interfaceOptions]="{ header: 'Establecimiento' }"
+        [interfaceOptions]="{ header: ('adicional.establishment' | translate) }"
       >
-        <ion-select-option [value]="SIN_ESTABLECIMIENTO">Sin establecimiento</ion-select-option>
+        <ion-select-option [value]="SIN_ESTABLECIMIENTO">{{ 'common.no_establishment' | translate }}</ion-select-option>
         @for (est of establecimientos; track est) {
           <ion-select-option [value]="est">{{ est }}</ion-select-option>
         }
       </ion-select>
     </ion-item>
 
-    <label class="field-label">Nota <span class="optional">(opcional)</span></label>
+    <label class="field-label">{{ 'adicional.note' | translate }} <span class="optional">{{ 'common.optional' | translate }}</span></label>
     <ion-item lines="none" class="input-item">
       <ion-input
         [(ngModel)]="nota"
-        placeholder="Ej: Traslado Rosario"
+        [placeholder]="'adicional.note_placeholder' | translate"
         maxlength="80"
       ></ion-input>
     </ion-item>
@@ -95,6 +95,6 @@
     class="save-btn"
   >
     <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-    Guardar
+    {{ 'common.save' | translate }}
   </ion-button>
 </ion-footer>

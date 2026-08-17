@@ -22,6 +22,8 @@
       "es2018",
       "dom"
     ],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "useDefineForClassFields": false
   },

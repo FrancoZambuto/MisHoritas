@@ -19,7 +19,7 @@ import {
   AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
+import {
   timeOutline,
   menuOutline,
   chevronBackOutline,
@@ -29,9 +29,14 @@ import {
   analyticsOutline,
   checkmarkCircle,
   addCircleOutline,
-  briefcaseOutline
+  briefcaseOutline,
+  sunnyOutline,
+  moonOutline,
+  contrastOutline
 } from 'ionicons/icons';
 import { UserService, HoursService } from '../../services';
+import { ThemeService, ThemeMode } from '../../services/theme.service';
+import { I18nService, TranslatePipe } from '../../services/i18n.service';
 import { DayModalComponent, AddItemModalComponent, AddItemType } from '../../components';
 import {
   HoursEntries,
@@ -61,6 +66,7 @@ interface CalendarDay {
   standalone: true,
   imports: [
     CommonModule,
+    TranslatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -79,11 +85,15 @@ export class CalendarPage implements OnInit, OnDestroy {
   viewMode: ViewMode = 'month';
   currentDate: Date = new Date();
   calendarDays: CalendarDay[] = [];
-  weekDays: string[] = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   userName: string = '';
   hoursEntries: HoursEntries = {};
   headerAsset: string = GENERIC_BRANDING_ASSET;
-  
+  themeMode: ThemeMode = 'system';
+
+  get weekDays(): string[] {
+    return Array.from({ length: 7 }, (_, i) => this.i18n.t(`weekdays.short.${i}`));
+  }
+
   private hoursSub?: Subscription;
   private userSub?: Subscription;
 
@@ -93,9 +103,11 @@ export class CalendarPage implements OnInit, OnDestroy {
     private alertController: AlertController,
     private router: Router,
     private userService: UserService,
-    private hoursService: HoursService
+    private hoursService: HoursService,
+    private themeService: ThemeService,
+    private i18n: I18nService
   ) {
-    addIcons({ 
+    addIcons({
       timeOutline,
       menuOutline,
       chevronBackOutline,
@@ -105,11 +117,17 @@ export class CalendarPage implements OnInit, OnDestroy {
       analyticsOutline,
       checkmarkCircle,
       addCircleOutline,
-      briefcaseOutline
+      briefcaseOutline,
+      sunnyOutline,
+      moonOutline,
+      contrastOutline
     });
   }
 
   async ngOnInit(): Promise<void> {
+    await this.themeService.init();
+    this.themeMode = this.themeService.getMode();
+
     this.userSub = this.userService.user$.subscribe(user => {
       this.userName = user.nombre;
       this.headerAsset = resolveHeaderAsset(user.areaProfesional);
@@ -129,11 +147,8 @@ export class CalendarPage implements OnInit, OnDestroy {
   }
 
   get currentMonthYear(): string {
-    const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    return `${months[this.currentDate.getMonth()]} ${this.currentDate.getFullYear()}`;
+    const month = this.i18n.t(`months.${this.currentDate.getMonth()}`);
+    return `${month} ${this.currentDate.getFullYear()}`;
   }
 
   get currentWeekRange(): string {
@@ -146,8 +161,8 @@ export class CalendarPage implements OnInit, OnDestroy {
   }
 
   get currentDayFormatted(): string {
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    return `${days[this.currentDate.getDay()]} ${this.currentDate.getDate()}`;
+    const day = this.i18n.t(`weekdays.long.${this.currentDate.getDay()}`);
+    return `${day} ${this.currentDate.getDate()}`;
   }
 
   segmentChanged(event: CustomEvent): void {
@@ -306,9 +321,9 @@ export class CalendarPage implements OnInit, OnDestroy {
   }
 
   private formatDisplayDate(date: Date): string {
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return `${days[date.getDay()]} ${date.getDate()} de ${months[date.getMonth()]}`;
+    const day = this.i18n.t(`weekdays.long.${date.getDay()}`);
+    const month = this.i18n.t(`months.short.${date.getMonth()}`);
+    return `${day} ${date.getDate()} ${month}`;
   }
 
   async onDayClick(day: CalendarDay): Promise<void> {
@@ -366,17 +381,17 @@ export class CalendarPage implements OnInit, OnDestroy {
 
     const currentArea = this.userService.getAreaProfesional();
     const alert = await this.alertController.create({
-      header: '¿Cuál es tu área?',
+      header: this.i18n.t('calendar.what_area'),
       inputs: PROFESSIONAL_AREAS.map((area) => ({
         type: 'radio' as const,
-        label: area.displayName,
+        label: this.i18n.t(`professional_areas.${area.id}`),
         value: area.id,
         checked: area.id === currentArea
       })),
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: this.i18n.t('common.cancel'), role: 'cancel' },
         {
-          text: 'Guardar',
+          text: this.i18n.t('common.save'),
           handler: (value: ProfessionalAreaId) => {
             if (!value) return false;
             void this.userService.updateAreaProfesional(value);
@@ -397,6 +412,26 @@ export class CalendarPage implements OnInit, OnDestroy {
   async goToReports(): Promise<void> {
     await this.menuController.close();
     await this.router.navigate(['/reports']);
+  }
+
+  async toggleTheme(): Promise<void> {
+    this.themeMode = await this.themeService.cycle();
+  }
+
+  getThemeIcon(): string {
+    switch (this.themeMode) {
+      case 'light': return 'sunny-outline';
+      case 'dark': return 'moon-outline';
+      default: return 'contrast-outline';
+    }
+  }
+
+  getThemeLabel(): string {
+    switch (this.themeMode) {
+      case 'light': return this.i18n.t('menu.theme_light');
+      case 'dark': return this.i18n.t('menu.theme_dark');
+      default: return this.i18n.t('menu.theme_system');
+    }
   }
 
   getMonthTotalHours(): number {

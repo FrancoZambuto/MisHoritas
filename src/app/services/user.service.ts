@@ -45,6 +45,7 @@ export class UserService {
     const user: User = {
       nombre: wizardState.nombre,
       areaProfesional: wizardState.areaProfesional,
+      idioma: wizardState.idioma,
       establecimientos: wizardState.establecimientos,
       tiposDeHoraPorEstablecimiento: wizardState.tiposDeHoraPorEstablecimiento,
       establecimientoColors: colors,

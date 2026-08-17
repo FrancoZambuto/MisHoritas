@@ -4,3 +4,4 @@ export * from './hours.service';
 export * from './billing.service';
 export * from './reports.service';
 export * from './billing-pdf.service';
+export * from './i18n.service';

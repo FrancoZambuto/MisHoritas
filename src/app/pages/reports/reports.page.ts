@@ -36,6 +36,7 @@ import {
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ReportsService } from '../../services/reports.service';
 import { BillingService } from '../../services';
+import { TranslatePipe } from '../../services/i18n.service';
 import { ESTABLECIMIENTO_COLORS } from '../../models';
 import {
   FinancialReport,
@@ -53,6 +54,7 @@ Chart.register(...registerables);
   imports: [
     CommonModule,
     FormsModule,
+    TranslatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,

@@ -1,12 +1,13 @@
+// ── Header ──
 .wizard-header {
   ion-toolbar {
     --background: var(--ion-color-light);
     --border-width: 0;
   }
-  
+
   ion-title {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
   }
 }
 
@@ -14,32 +15,35 @@
   --background: var(--ion-color-light);
 }
 
+// ── Progress ──
 .progress-container {
   padding: 20px 24px 8px;
-  
+
   .progress-bar {
-    height: 6px;
-    background: var(--ion-color-medium-tint);
-    border-radius: 3px;
+    height: 3px;
+    background: rgba(var(--ion-color-medium-rgb), 0.2);
+    border-radius: 2px;
     overflow: hidden;
   }
-  
+
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--ion-color-primary), var(--ion-color-primary-shade));
-    border-radius: 3px;
-    transition: width 0.4s ease;
+    background: var(--ion-color-primary);
+    border-radius: 2px;
+    transition: width 250ms ease;
   }
-  
+
   .step-indicator {
     display: block;
     text-align: center;
-    margin-top: 8px;
-    font-size: 0.8rem;
+    margin-top: 10px;
+    font-size: var(--text-xs);
     color: var(--ion-color-medium);
+    letter-spacing: 0.2px;
   }
 }
 
+// ── Step content ──
 .wizard-body {
   padding: 16px 24px;
 }
@@ -51,48 +55,50 @@
 }
 
 .step-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--ion-color-primary-tint), var(--ion-color-primary));
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(var(--ion-color-primary-rgb), 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  
+  margin-bottom: 16px;
+
   ion-icon {
-    font-size: 36px;
-    color: white;
+    font-size: 24px;
+    color: var(--ion-color-primary);
   }
 }
 
 .step-title {
-  font-size: 1.4rem;
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--ion-color-dark);
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   text-align: center;
 }
 
 .step-subtitle {
-  font-size: 0.95rem;
+  font-size: 14px;
   color: var(--ion-color-medium);
   margin: 0 0 24px;
   text-align: center;
 }
 
+// ── Selects ──
 .step3-select-item {
   width: 100%;
   max-width: 400px;
   --background: var(--hb-input-bg);
-  --border-radius: 12px;
-  --padding-start: 16px;
-  --padding-end: 16px;
-  border-radius: 12px;
+  --border-radius: var(--radius-md);
+  --padding-start: 14px;
+  --padding-end: 14px;
+  border-radius: var(--radius-md);
   margin-bottom: 16px;
 
   ion-select {
     --padding-end: 8px;
+    font-size: var(--text-base);
   }
 
   ion-select::part(icon) {
@@ -101,12 +107,13 @@
   }
 }
 
+// ── Area options ──
 .area-options {
   width: 100%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .area-option {
@@ -115,28 +122,28 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 52px;
-  padding: 14px 16px;
-  border: none;
-  border-radius: 12px;
+  min-height: 48px;
+  padding: 13px 16px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-md);
   background: var(--hb-input-bg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   color: var(--ion-text-color);
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 500;
   text-align: left;
   line-height: 1.35;
   cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
 
   &.selected {
-    background: rgba(var(--ion-color-primary-rgb), 0.18);
-    box-shadow: 0 0 0 2px var(--ion-color-primary);
+    background: rgba(var(--ion-color-primary-rgb), 0.12);
+    border-color: var(--ion-color-primary);
     color: var(--ion-color-dark);
   }
 
   ion-icon {
     flex-shrink: 0;
-    font-size: 22px;
+    font-size: 18px;
     color: var(--ion-color-primary);
   }
 }
@@ -146,6 +153,7 @@
   min-width: 0;
 }
 
+// ── Name form ──
 .nombre-form {
   width: 100%;
   max-width: 320px;
@@ -153,39 +161,39 @@
 
 .input-item {
   --background: var(--hb-input-bg);
-  --border-radius: 12px;
-  --padding-start: 16px;
-  --padding-end: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --border-radius: var(--radius-md);
+  --padding-start: 14px;
+  --padding-end: 14px;
+  border-radius: var(--radius-md);
 
   ion-input {
     --color: var(--ion-text-color);
     --placeholder-color: var(--ion-color-medium);
-    --placeholder-opacity: 1;
+    --placeholder-opacity: 0.7;
   }
 }
 
 .custom-input {
-  --padding-top: 14px;
-  --padding-bottom: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
   --color: var(--ion-text-color);
-  font-size: 1rem;
+  font-size: var(--text-base);
   text-align: center;
 }
 
 .error-message {
   color: var(--ion-color-danger);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   margin-top: 8px;
   text-align: center;
 }
 
+// ── Footer ──
 .wizard-footer {
   background: var(--ion-color-light);
-  border-top: 1px solid var(--ion-color-light-shade);
-  padding: 16px 24px;
-  padding-bottom: calc(16px + var(--ion-safe-area-bottom, 0px));
+  border-top: 1px solid var(--hb-border);
+  padding: 14px 24px;
+  padding-bottom: calc(14px + var(--ion-safe-area-bottom, 0px));
 }
 
 .footer-buttons {
@@ -196,15 +204,28 @@
 }
 
 .nav-btn {
-  --border-radius: 12px;
-  --padding-top: 14px;
-  --padding-bottom: 14px;
+  --border-radius: var(--radius-md);
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --background: transparent;
+  --border-width: 1.5px;
+  --border-style: solid;
+  --border-color: var(--hb-border);
+  --color: var(--ion-color-medium);
   min-width: 120px;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: var(--text-base);
+
+  &.next-btn {
+    --border-color: var(--ion-color-primary);
+    --color: var(--ion-color-primary);
+  }
 }
 
 .finish-btn {
   --background: var(--ion-color-success);
+  --color: var(--ion-color-primary-contrast);
+  --border-width: 0;
 }
 
 .spacer {
@@ -212,13 +233,13 @@
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.25s ease;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;

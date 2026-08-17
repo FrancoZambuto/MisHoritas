@@ -1,6 +1,6 @@
 <ion-header class="wizard-header">
   <ion-toolbar>
-    <ion-title>Configuración inicial</ion-title>
+    <ion-title>{{ 'wizard.title' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
         <ion-icon name="close" slot="icon-only"></ion-icon>
@@ -14,30 +14,70 @@
     <div class="progress-bar">
       <div class="progress-fill" [style.width]="getProgressWidth()"></div>
     </div>
-    <span class="step-indicator">Paso {{ currentStep }} de {{ totalSteps }}</span>
+    <span class="step-indicator">{{ 'wizard.step_indicator' | translate:{ current: currentStep, total: totalSteps } }}</span>
   </div>
 
   <div class="wizard-body">
-    <!-- STEP 1: Nombre -->
+    <!-- STEP 1: Idioma -->
+    @if (currentStep === steps.language) {
+      <div class="step-container fade-in">
+        <div class="step-icon">
+          <ion-icon name="language-outline"></ion-icon>
+        </div>
+        <h2 class="step-title">{{ 'wizard.step_language_title' | translate }}</h2>
+        <p class="step-subtitle">{{ 'wizard.step_language_subtitle' | translate }}</p>
+
+        <div class="area-options" role="listbox" aria-label="Language">
+          <button
+            type="button"
+            class="area-option"
+            role="option"
+            [attr.aria-selected]="wizardState.idioma === 'es'"
+            [class.selected]="wizardState.idioma === 'es'"
+            (click)="selectLanguage('es')"
+          >
+            <span class="area-option-label">🇪🇸 {{ 'wizard.lang_es' | translate }}</span>
+            @if (wizardState.idioma === 'es') {
+              <ion-icon name="checkmark-outline"></ion-icon>
+            }
+          </button>
+          <button
+            type="button"
+            class="area-option"
+            role="option"
+            [attr.aria-selected]="wizardState.idioma === 'en'"
+            [class.selected]="wizardState.idioma === 'en'"
+            (click)="selectLanguage('en')"
+          >
+            <span class="area-option-label">🇺🇸 {{ 'wizard.lang_en' | translate }}</span>
+            @if (wizardState.idioma === 'en') {
+              <ion-icon name="checkmark-outline"></ion-icon>
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- STEP 2: Nombre -->
     @if (currentStep === steps.name) {
       <div class="step-container fade-in">
         <div class="step-icon">
           <ion-icon name="person-outline"></ion-icon>
         </div>
-        <h2 class="step-title">¿Cómo te llamas?</h2>
-        <p class="step-subtitle">Ingresa tu nombre</p>
-        
+        <h2 class="step-title">{{ 'wizard.step_name_title' | translate }}</h2>
+        <p class="step-subtitle">{{ 'wizard.step_name_subtitle' | translate }}</p>
+
         <form [formGroup]="nombreForm" class="nombre-form">
           <ion-item lines="none" class="input-item">
             <ion-input
               formControlName="nombre"
-              placeholder="Tu nombre"
+              [placeholder]="'wizard.step_name_placeholder' | translate"
               type="text"
               maxlength="25"
               class="custom-input"
             ></ion-input>
           </ion-item>
-          
+
           @if (nombreInvalid) {
             <div class="error-message">
               {{ nombreErrorMessage }}
@@ -47,16 +87,16 @@
       </div>
     }
 
-    <!-- STEP 2: Área profesional -->
+    <!-- STEP 3: Área profesional -->
     @if (currentStep === steps.area) {
       <div class="step-container fade-in">
         <div class="step-icon">
           <ion-icon name="briefcase-outline"></ion-icon>
         </div>
-        <h2 class="step-title">¿Cuál es tu área?</h2>
-        <p class="step-subtitle">Elegí una opción para personalizar la app</p>
+        <h2 class="step-title">{{ 'wizard.step_area_title' | translate }}</h2>
+        <p class="step-subtitle">{{ 'wizard.step_area_subtitle' | translate }}</p>
 
-        <div class="area-options" role="listbox" aria-label="Área profesional">
+        <div class="area-options" role="listbox" [attr.aria-label]="'wizard.step_area_title' | translate">
           @for (area of professionalAreas; track area.id) {
             <button
               type="button"
@@ -66,7 +106,7 @@
               [class.selected]="wizardState.areaProfesional === area.id"
               (click)="selectArea(area.id)"
             >
-              <span class="area-option-label">{{ area.displayName }}</span>
+              <span class="area-option-label">{{ 'professional_areas.' + area.id | translate }}</span>
               @if (wizardState.areaProfesional === area.id) {
                 <ion-icon name="checkmark-outline"></ion-icon>
               }
@@ -76,17 +116,17 @@
       </div>
     }
 
-    <!-- STEP 3: Establecimientos -->
+    <!-- STEP 4: Establecimientos -->
     @if (currentStep === steps.establecimientos) {
       <div class="step-container fade-in">
         <div class="step-icon">
           <ion-icon name="business-outline"></ion-icon>
         </div>
-        <h2 class="step-title">Tus lugares de trabajo</h2>
-        
+        <h2 class="step-title">{{ 'wizard.step_establishments_title' | translate }}</h2>
+
         <app-dynamic-list-input
-          title="Ingrese el establecimiento, ej: Sanatorio Privado Argentino"
-          placeholder="Nombre del establecimiento"
+          [title]="'wizard.step_establishments_input_title' | translate"
+          [placeholder]="'wizard.step_establishments_placeholder' | translate"
           [minLength]="3"
           [maxLength]="50"
           [initialValues]="wizardState.establecimientos"
@@ -96,34 +136,34 @@
       </div>
     }
 
-    <!-- STEP 4: Tipos de horas -->
+    <!-- STEP 5: Tipos de horas -->
     @if (currentStep === steps.tiposHora) {
       <div class="step-container fade-in">
         <div class="step-icon">
           <ion-icon name="time-outline"></ion-icon>
         </div>
-        <h2 class="step-title">Tipos de horas</h2>
+        <h2 class="step-title">{{ 'wizard.step_hour_types_title' | translate }}</h2>
 
         <ion-item lines="none" class="step3-select-item">
           <ion-select
             [(ngModel)]="selectedEstablecimientoTipos"
             (ionChange)="onTiposEstablecimientoChange()"
-            placeholder="Seleccionar establecimiento"
+            [placeholder]="'wizard.step_hour_types_select_placeholder' | translate"
             toggleIcon="chevron-down-outline"
             expandedIcon="chevron-down-outline"
             interface="action-sheet"
-            [interfaceOptions]="{ header: 'Establecimiento' }"
+            [interfaceOptions]="{ header: ('wizard.step_hour_types_action_header' | translate) }"
           >
             @for (est of wizardState.establecimientos; track est) {
               <ion-select-option [value]="est">{{ est }}</ion-select-option>
             }
           </ion-select>
         </ion-item>
-        
+
         @for (est of [selectedEstablecimientoTipos]; track est) {
           <app-dynamic-list-input
-            [title]="'Defina los tipos de horas para ' + selectedEstablecimientoTipos + ', ej: Horas extras'"
-            placeholder="Tipo de hora"
+            [title]="'wizard.step_hour_types_input_title' | translate:{ name: selectedEstablecimientoTipos }"
+            [placeholder]="'wizard.step_hour_types_placeholder' | translate"
             [minLength]="3"
             [maxLength]="50"
             [initialValues]="getTiposDeHoraForSelectedEstablecimiento()"
@@ -140,13 +180,13 @@
   <div class="footer-buttons">
     @if (currentStep > 1) {
       <ion-button
-        fill="outline"
+        fill="clear"
         color="medium"
         (click)="prevStep()"
         class="nav-btn"
       >
         <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
-        Anterior
+        {{ 'common.previous' | translate }}
       </ion-button>
     } @else {
       <div class="spacer"></div>
@@ -154,17 +194,18 @@
 
     @if (currentStep < totalSteps) {
       <ion-button
-        fill="solid"
+        fill="outline"
         color="primary"
         [disabled]="
+          (currentStep === steps.language && !canProceedLanguage()) ||
           (currentStep === steps.name && !canProceedStep1()) ||
           (currentStep === steps.area && !canProceedStep2()) ||
           (currentStep === steps.establecimientos && !canProceedStep3())
         "
         (click)="nextStep()"
-        class="nav-btn"
+        class="nav-btn next-btn"
       >
-        Siguiente
+        {{ 'common.next' | translate }}
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-button>
     } @else if (shouldFinishTiposStep) {
@@ -176,17 +217,17 @@
         class="nav-btn finish-btn"
       >
         <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-        Finalizar
+        {{ 'common.finish' | translate }}
       </ion-button>
     } @else {
       <ion-button
-        fill="solid"
+        fill="outline"
         color="primary"
         [disabled]="!canProceedCurrentEstablecimientoTipos()"
         (click)="onTiposStepPrimaryAction()"
-        class="nav-btn"
+        class="nav-btn next-btn"
       >
-        Siguiente
+        {{ 'common.next' | translate }}
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-button>
     }

@@ -33,6 +33,7 @@ import {
 } from 'ionicons/icons';
 import { UserService, HoursService, BillingService } from '../../services';
 import { BillingPdfService } from '../../services/billing-pdf.service';
+import { I18nService, TranslatePipe } from '../../services/i18n.service';
 import { AdicionalModalComponent } from '../../components';
 import {
   BillingResult,
@@ -49,8 +50,9 @@ import {
   styleUrls: ['./billing.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
+    TranslatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -80,10 +82,9 @@ export class BillingPage implements OnInit {
   selectedMonth: number = new Date().getMonth();
   selectedYear: number = new Date().getFullYear();
   
-  months: string[] = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
+  get months(): string[] {
+    return Array.from({ length: 12 }, (_, i) => this.i18n.t(`months.${i}`));
+  }
   
   years: number[] = [];
 
@@ -97,7 +98,8 @@ export class BillingPage implements OnInit {
     private userService: UserService,
     private hoursService: HoursService,
     private billingService: BillingService,
-    private billingPdfService: BillingPdfService
+    private billingPdfService: BillingPdfService,
+    private i18n: I18nService
   ) {
     addIcons({ 
       arrowBackOutline,
@@ -138,9 +140,9 @@ export class BillingPage implements OnInit {
 
   get emptyStateMessage(): string {
     if (this.hasConfiguredTipos || this.currentSnapshot || this.adicionales.length > 0) {
-      return `No hay horas cargadas en ${this.months[this.selectedMonth]}`;
+      return this.i18n.t('billing.no_hours_in', { month: this.months[this.selectedMonth] });
     }
-    return 'No hay tipos de hora definidos';
+    return this.i18n.t('billing.no_hour_types');
   }
 
   get hasConfirmedBilling(): boolean {
@@ -153,13 +155,13 @@ export class BillingPage implements OnInit {
 
   get primaryActionLabel(): string {
     if (this.hasConfirmedBilling) {
-      return 'Recalcular y guardar';
+      return this.i18n.t('billing.recalculate_save');
     }
-    return 'Calcular y guardar';
+    return this.i18n.t('billing.calculate_save');
   }
 
   get outdatedMessage(): string {
-    return 'Los datos de este mes cambiaron desde el último cálculo. El resultado guardado quedó desactualizado; recalculá para actualizarlo.';
+    return this.i18n.t('billing.outdated_message');
   }
 
   lineKey(line: BillingLine): string {
@@ -327,12 +329,12 @@ export class BillingPage implements OnInit {
 
   async removeAdicional(adicional: BillingAdicional): Promise<void> {
     const alert = await this.alertController.create({
-      header: 'Eliminar adicional',
-      message: `¿Eliminar "${adicional.concepto}"?`,
+      header: this.i18n.t('billing.delete_additional'),
+      message: this.i18n.t('billing.delete_additional_confirm', { name: adicional.concepto }),
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: this.i18n.t('common.cancel'), role: 'cancel' },
         {
-          text: 'Eliminar',
+          text: this.i18n.t('common.delete'),
           role: 'destructive',
           handler: () => {
             void this.persistAdicionales(
@@ -400,15 +402,15 @@ export class BillingPage implements OnInit {
 
   private async confirmRecalculation(): Promise<boolean> {
     const message = this.isSnapshotOutdated
-      ? 'Los datos de este mes (horas y/o adicionales) cambiaron. ¿Querés recalcular y reemplazar el resultado guardado?'
-      : 'Este mes ya tiene un cálculo guardado. ¿Querés recalcularlo y reemplazar el resultado histórico?';
+      ? this.i18n.t('billing.recalculate_outdated')
+      : this.i18n.t('billing.recalculate_existing');
 
     const alert = await this.alertController.create({
-      header: 'Recalcular facturación',
+      header: this.i18n.t('billing.recalculate_title'),
       message,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        { text: 'Recalcular', role: 'confirm' }
+        { text: this.i18n.t('common.cancel'), role: 'cancel' },
+        { text: this.i18n.t('common.recalculate'), role: 'confirm' }
       ]
     });
     await alert.present();
@@ -440,7 +442,7 @@ export class BillingPage implements OnInit {
 
   async exportPdf(): Promise<void> {
     if (!this.currentSnapshot || this.isSnapshotOutdated) {
-      await this.showToast('Exportá solo meses con cálculo confirmado y actualizado.');
+      await this.showToast(this.i18n.t('billing.export_only_confirmed'));
       return;
     }
 
@@ -449,7 +451,7 @@ export class BillingPage implements OnInit {
       await this.billingPdfService.exportSnapshot(this.currentSnapshot);
     } catch (error) {
       console.error(error);
-      await this.showToast('No se pudo generar el PDF.');
+      await this.showToast(this.i18n.t('billing.pdf_error'));
     } finally {
       this.exportingPdf = false;
     }

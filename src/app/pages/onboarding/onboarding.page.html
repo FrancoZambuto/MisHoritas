@@ -2,21 +2,27 @@
   <div class="onboarding-container">
     <div class="hero-section">
       <img src="assets/MisHoritas.png" alt="MisHoritas" class="logo-image" />
-      <p class="subtitle">Gestiona tus horas de trabajo de forma simple y organizada</p>
+      <p class="subtitle">{{ 'onboarding.subtitle' | translate }}</p>
     </div>
 
     <div class="features-section">
       <div class="feature">
-        <ion-icon name="calendar-outline"></ion-icon>
-        <span>Registra tus horas día a día</span>
+        <div class="feature-icon-badge">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <span>{{ 'onboarding.feature_hours' | translate }}</span>
       </div>
       <div class="feature">
-        <ion-icon name="business-outline"></ion-icon>
-        <span>Múltiples establecimientos</span>
+        <div class="feature-icon-badge">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <span>{{ 'onboarding.feature_establishments' | translate }}</span>
       </div>
       <div class="feature">
-        <ion-icon name="calculator-outline"></ion-icon>
-        <span>Calcula tu facturación</span>
+        <div class="feature-icon-badge">
+          <ion-icon name="calculator-outline"></ion-icon>
+        </div>
+        <span>{{ 'onboarding.feature_billing' | translate }}</span>
       </div>
     </div>
 
@@ -27,7 +33,7 @@
         (click)="openWizard()"
         class="start-btn"
       >
-        Comenzar
+        {{ 'common.start' | translate }}
         <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
       </ion-button>
     </div>

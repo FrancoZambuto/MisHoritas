@@ -15,13 +15,14 @@ import {
   arrowForwardOutline 
 } from 'ionicons/icons';
 import { WizardComponent } from '../../components';
+import { TranslatePipe } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-onboarding',
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonContent, IonButton],
+  imports: [CommonModule, IonContent, IonButton, TranslatePipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OnboardingPage {

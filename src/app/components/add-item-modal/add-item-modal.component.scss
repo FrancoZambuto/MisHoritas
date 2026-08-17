@@ -1,12 +1,13 @@
+// ── Header ──
 .modal-header {
   ion-toolbar {
     --background: var(--ion-color-light);
     --border-width: 0;
   }
-  
+
   ion-title {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
   }
 }
 
@@ -15,58 +16,65 @@
 }
 
 .modal-body {
-  padding: 24px 20px;
+  padding: 20px 20px;
 }
 
 .step-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--ion-color-primary-tint), var(--ion-color-primary));
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(var(--ion-color-primary-rgb), 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
-  
+  margin: 0 auto 14px;
+
   ion-icon {
-    font-size: 40px;
-    color: white;
+    font-size: 24px;
+    color: var(--ion-color-primary);
   }
 }
 
 .step-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: white;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--ion-color-dark);
   text-align: center;
-  margin: 0 0 24px;
+  margin: 0 0 20px;
 }
 
 .est-select-item {
   --background: var(--hb-input-bg);
-  --border-radius: 12px;
+  --border-radius: var(--radius-md);
   --padding-start: 14px;
   --padding-end: 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   margin-bottom: 16px;
 
   ion-select {
-    --padding-top: 12px;
-    --padding-bottom: 12px;
+    --padding-top: 11px;
+    --padding-bottom: 11px;
+    font-size: var(--text-base);
   }
 }
 
+// ── Footer ──
 .modal-footer {
   background: var(--ion-color-light);
-  border-top: none;
-  padding: 16px 20px;
-  padding-bottom: calc(16px + var(--ion-safe-area-bottom, 0px));
+  border-top: 1px solid var(--hb-border);
+  padding: 14px 20px;
+  padding-bottom: calc(14px + var(--ion-safe-area-bottom, 0px));
 }
 
 .save-btn {
-  --border-radius: 14px;
-  --padding-top: 16px;
-  --padding-bottom: 16px;
+  --border-radius: var(--radius-md);
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  --background: transparent;
+  --border-width: 1.5px;
+  --border-style: solid;
+  --border-color: var(--ion-color-primary);
+  --color: var(--ion-color-primary);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }

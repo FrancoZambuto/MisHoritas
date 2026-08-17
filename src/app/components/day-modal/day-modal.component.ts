@@ -26,6 +26,7 @@ import {
   warningOutline
 } from 'ionicons/icons';
 import { HoursService, UserService } from '../../services';
+import { I18nService, TranslatePipe } from '../../services/i18n.service';
 import { HourEntry } from '../../models';
 
 @Component({
@@ -34,9 +35,10 @@ import { HourEntry } from '../../models';
   styleUrls: ['./day-modal.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -64,7 +66,8 @@ export class DayModalComponent implements OnInit {
     private modalController: ModalController,
     private alertController: AlertController,
     private hoursService: HoursService,
-    private userService: UserService
+    private userService: UserService,
+    private i18n: I18nService
   ) {
     addIcons({ 
       close, 
@@ -158,9 +161,9 @@ export class DayModalComponent implements OnInit {
 
     if (this.exceedsMaxHours) {
       const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'El total de horas no puede superar 24 horas en un día.',
-        buttons: ['Entendido']
+        header: this.i18n.t('common.error'),
+        message: this.i18n.t('day_modal.exceeds_max_alert'),
+        buttons: [this.i18n.t('common.understood')]
       });
       await alert.present();
       return;
@@ -178,15 +181,15 @@ export class DayModalComponent implements OnInit {
 
   async confirmDelete(): Promise<void> {
     const alert = await this.alertController.create({
-      header: 'Eliminar registros',
-      message: '¿Estás seguro de eliminar todos los registros de este día?',
+      header: this.i18n.t('day_modal.delete_title'),
+      message: this.i18n.t('day_modal.delete_message'),
       buttons: [
         {
-          text: 'Cancelar',
+          text: this.i18n.t('common.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Eliminar',
+          text: this.i18n.t('common.delete'),
           role: 'destructive',
           handler: async () => {
             await this.hoursService.setEntriesForDate(this.date, []);
