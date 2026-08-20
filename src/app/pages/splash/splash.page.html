@@ -1,9 +1,10 @@
 <ion-content class="splash-content" [fullscreen]="true">
   <div class="splash-container">
-    <div class="logo-container" [class.ready]="!!startupAsset">
+    <div class="logo-container" [class.ready]="ready">
       @if (startupAsset) {
         <img [src]="startupAsset" alt="MisHoritas" class="logo-image" />
       }
+      <h1 class="splash-title">Mis<span class="splash-title-accent">Horitas</span></h1>
     </div>
     <div class="accent-bar"></div>
   </div>

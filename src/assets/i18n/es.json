@@ -65,6 +65,7 @@
   "professional_areas.hemotherapy": "Técnico en Hemoterapia",
   "professional_areas.kinesiology": "Kinesiología",
   "professional_areas.surgical_instrumentation": "Instrumentación Quirúrgica",
+  "professional_areas.dev": "Desarrollo",
   "professional_areas.other": "Otros",
 
   "menu.title": "Menú",
@@ -76,6 +77,12 @@
   "menu.theme_light": "Tema claro",
   "menu.theme_dark": "Tema oscuro",
   "menu.theme_system": "Tema del sistema",
+  "menu.color_palette": "Paleta de colores",
+  "menu.palette_nocturne": "Nocturne",
+  "menu.palette_ocean": "Ocean",
+  "menu.palette_sunset": "Sunset",
+  "menu.palette_sapphire": "Sapphire",
+  "menu.palette_header": "Elegí una paleta",
 
   "calendar.day": "Día",
   "calendar.week": "Semana",

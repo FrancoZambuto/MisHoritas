@@ -32,10 +32,11 @@ import {
   briefcaseOutline,
   sunnyOutline,
   moonOutline,
-  contrastOutline
+  contrastOutline,
+  colorPaletteOutline
 } from 'ionicons/icons';
 import { UserService, HoursService } from '../../services';
-import { ThemeService, ThemeMode } from '../../services/theme.service';
+import { ThemeService, ThemeMode, ColorPalette } from '../../services/theme.service';
 import { I18nService, TranslatePipe } from '../../services/i18n.service';
 import { DayModalComponent, AddItemModalComponent, AddItemType } from '../../components';
 import {
@@ -43,7 +44,7 @@ import {
   HourEntry,
   PROFESSIONAL_AREAS,
   ProfessionalAreaId,
-  GENERIC_BRANDING_ASSET,
+  FALLBACK_PROFESSIONAL_ASSET,
   resolveHeaderAsset
 } from '../../models';
 
@@ -87,7 +88,7 @@ export class CalendarPage implements OnInit, OnDestroy {
   calendarDays: CalendarDay[] = [];
   userName: string = '';
   hoursEntries: HoursEntries = {};
-  headerAsset: string = GENERIC_BRANDING_ASSET;
+  headerAsset: string = FALLBACK_PROFESSIONAL_ASSET;
   themeMode: ThemeMode = 'system';
 
   get weekDays(): string[] {
@@ -120,7 +121,8 @@ export class CalendarPage implements OnInit, OnDestroy {
       briefcaseOutline,
       sunnyOutline,
       moonOutline,
-      contrastOutline
+      contrastOutline,
+      colorPaletteOutline
     });
   }
 
@@ -432,6 +434,36 @@ export class CalendarPage implements OnInit, OnDestroy {
       case 'dark': return this.i18n.t('menu.theme_dark');
       default: return this.i18n.t('menu.theme_system');
     }
+  }
+
+  getPaletteLabel(): string {
+    const palette = this.themeService.getPalette();
+    return this.i18n.t(`menu.palette_${palette}`);
+  }
+
+  async changeColorPalette(): Promise<void> {
+    const palettes: ColorPalette[] = ['nocturne', 'ocean', 'sunset', 'sapphire'];
+    const current = this.themeService.getPalette();
+
+    const alert = await this.alertController.create({
+      header: this.i18n.t('menu.palette_header'),
+      inputs: palettes.map(p => ({
+        type: 'radio' as const,
+        label: this.i18n.t(`menu.palette_${p}`),
+        value: p,
+        checked: p === current
+      })),
+      buttons: [
+        { text: this.i18n.t('common.cancel'), role: 'cancel' },
+        {
+          text: this.i18n.t('common.understood'),
+          handler: (selected: ColorPalette) => {
+            this.themeService.setPalette(selected);
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   getMonthTotalHours(): number {

@@ -1,4 +1,4 @@
-export const GENERIC_BRANDING_ASSET = 'assets/MisHoritas.png';
+export const GENERIC_BRANDING_ASSET = '';
 export const FALLBACK_PROFESSIONAL_ASSET = 'assets/Other.png';
 
 export type ProfessionalAreaId =
@@ -7,6 +7,7 @@ export type ProfessionalAreaId =
   | 'hemotherapy'
   | 'kinesiology'
   | 'surgical_instrumentation'
+  | 'dev'
   | 'other';
 
 export interface ProfessionalAreaConfig {
@@ -54,6 +55,12 @@ export const PROFESSIONAL_AREAS: readonly ProfessionalAreaConfig[] = [
     displayName: 'Instrumentación Quirúrgica',
     startupAsset: 'assets/bisturi.png',
     headerAsset: 'assets/bisturi.png'
+  },
+  {
+    id: 'dev',
+    displayName: 'Desarrollo',
+    startupAsset: 'assets/dev.png',
+    headerAsset: 'assets/dev.png'
   },
   {
     id: 'other',

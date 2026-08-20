@@ -22,12 +22,17 @@
   padding: 16px 0;
 }
 
-.logo-image {
-  width: 180px;
-  height: auto;
-  max-height: 260px;
-  object-fit: contain;
-  margin-bottom: 20px;
+.splash-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.splash-title-accent {
+  color: var(--ion-color-primary);
 }
 
 .subtitle {

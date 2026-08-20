@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
 import { UserService, HoursService, BillingService } from '../../services';
-import { resolveStartupAsset } from '../../models';
+import { hasProfessionalAreaSelection, resolveProfessionalAreaConfig } from '../../models';
 
 @Component({
   selector: 'app-splash',
@@ -15,6 +15,7 @@ import { resolveStartupAsset } from '../../models';
 })
 export class SplashPage implements OnInit {
   startupAsset: string | null = null;
+  ready = false;
 
   constructor(
     private router: Router,
@@ -29,7 +30,13 @@ export class SplashPage implements OnInit {
 
   private async initializeApp(): Promise<void> {
     const user = await this.userService.loadUser();
-    this.startupAsset = resolveStartupAsset(user.areaProfesional);
+
+    if (hasProfessionalAreaSelection(user.areaProfesional)) {
+      const config = resolveProfessionalAreaConfig(user.areaProfesional);
+      this.startupAsset = config.startupAsset;
+    }
+
+    this.ready = true;
 
     await Promise.all([
       this.hoursService.loadHours(),

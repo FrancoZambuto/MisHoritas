@@ -30,6 +30,10 @@
         <ion-icon [name]="getThemeIcon()" slot="start" color="primary"></ion-icon>
         <ion-label>{{ getThemeLabel() }}</ion-label>
       </ion-item>
+      <ion-item button (click)="changeColorPalette()">
+        <ion-icon name="color-palette-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>{{ getPaletteLabel() }}</ion-label>
+      </ion-item>
     </ion-list>
   </ion-content>
 </ion-menu>

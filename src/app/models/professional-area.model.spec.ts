@@ -10,11 +10,12 @@ import {
 } from './professional-area.model';
 
 describe('Professional area branding resolver', () => {
-  it('Scenario A — brand-new user without profession uses MisHoritas branding', () => {
+  it('Scenario A — brand-new user without profession gets empty branding (text-only splash)', () => {
     expect(resolveStartupAsset(undefined)).toBe(GENERIC_BRANDING_ASSET);
     expect(resolveHeaderAsset(undefined)).toBe(GENERIC_BRANDING_ASSET);
     expect(resolveStartupAsset(null)).toBe(GENERIC_BRANDING_ASSET);
     expect(resolveStartupAsset('')).toBe(GENERIC_BRANDING_ASSET);
+    expect(GENERIC_BRANDING_ASSET).toBe('');
   });
 
   it('Scenario B — Bioquímica uses Bacteria.png for startup and header', () => {
@@ -47,6 +48,12 @@ describe('Professional area branding resolver', () => {
     expect(branding.headerAsset).toBe('assets/bisturi.png');
   });
 
+  it('Scenario G2 — Desarrollo uses dev.png for startup and header', () => {
+    const branding = resolveBrandingAssets('dev');
+    expect(branding.startupAsset).toBe('assets/dev.png');
+    expect(branding.headerAsset).toBe('assets/dev.png');
+  });
+
   it('Scenario G — Otros uses Other.png for startup and header', () => {
     const branding = resolveBrandingAssets('other');
     expect(branding.startupAsset).toBe(FALLBACK_PROFESSIONAL_ASSET);
@@ -69,6 +76,7 @@ describe('Professional area branding resolver', () => {
       'Técnico en Hemoterapia',
       'Kinesiología',
       'Instrumentación Quirúrgica',
+      'Desarrollo',
       'Otros'
     ]);
     expect(isProfessionalAreaId('Bioquímica')).toBeFalse();

@@ -23,6 +23,10 @@ log.txt
 /platforms
 /plugins
 
+# Capacitor native projects
+/ios
+/android
+
 # Compiled output
 /dist
 /tmp
@@ -68,3 +72,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Temporary docs
+theme-options.md
