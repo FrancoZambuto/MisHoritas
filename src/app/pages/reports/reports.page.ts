@@ -228,6 +228,21 @@ export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
     this.rateChart = undefined;
   }
 
+  private get chartPrimary(): string {
+    return this.paletteColors[0];
+  }
+
+  private get chartSecondary(): string {
+    return this.paletteColors[2];
+  }
+
+  private hexToRgba(hex: string, alpha: number): string {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
   private chartDefaults() {
     return {
       responsive: true,
@@ -238,7 +253,7 @@ export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
           backgroundColor: '#252545',
           titleColor: '#e2e2e2',
           bodyColor: '#e2e2e2',
-          borderColor: '#a78bfa',
+          borderColor: this.chartPrimary,
           borderWidth: 1
         }
       }
@@ -262,11 +277,11 @@ export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
         labels,
         datasets: [{
           data,
-          borderColor: '#a78bfa',
-          backgroundColor: 'rgba(167, 139, 250, 0.18)',
+          borderColor: this.chartPrimary,
+          backgroundColor: this.hexToRgba(this.chartPrimary, 0.18),
           fill: true,
           tension: 0.35,
-          pointBackgroundColor: '#a78bfa',
+          pointBackgroundColor: this.chartPrimary,
           pointRadius: 4,
           pointHoverRadius: 6
         }]
@@ -421,11 +436,11 @@ export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
         labels: points.map(p => p.label),
         datasets: [{
           data: points.map(p => p.rate),
-          borderColor: '#5dd9a3',
-          backgroundColor: 'rgba(93, 217, 163, 0.15)',
+          borderColor: this.chartSecondary,
+          backgroundColor: this.hexToRgba(this.chartSecondary, 0.15),
           fill: true,
           tension: 0.3,
-          pointBackgroundColor: '#5dd9a3',
+          pointBackgroundColor: this.chartSecondary,
           pointRadius: 4
         }]
       },
