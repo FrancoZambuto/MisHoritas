@@ -34,7 +34,7 @@ Esta política de privacidad puede actualizarse para reflejar cambios futuros en
 
 Para consultas relacionadas con esta política de privacidad:
 
-**Email:** TU_EMAIL
+**Email:** francoazambuto@gmail.com
 
 ---
 
@@ -74,4 +74,4 @@ This privacy policy may be updated to reflect future changes to MisHoritas. The 
 
 For questions regarding this privacy policy:
 
-**Email:** TU_EMAIL
+**Email:** francoazambuto@gmail.com
