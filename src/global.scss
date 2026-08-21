@@ -129,7 +129,7 @@ ion-menu {
 
 ion-alert {
   --background: var(--hb-surface);
-  --max-width: 320px;
+  --max-width: 85vw;
 
   &::part(backdrop) {
     background: var(--hb-backdrop);
@@ -148,6 +148,7 @@ ion-alert {
 
   .alert-head {
     padding: 20px 22px 8px;
+    text-align: center;
   }
 
   .alert-title {
@@ -161,6 +162,7 @@ ion-alert {
   .alert-radio-label,
   .alert-checkbox-label {
     color: var(--ion-text-color);
+    text-align: center;
   }
 
   .alert-message {
@@ -176,9 +178,18 @@ ion-alert {
     border-bottom: none;
   }
 
+  [aria-checked="false"] .alert-radio-icon {
+    display: none;
+  }
+
   .alert-radio-icon,
   .alert-checkbox-icon {
     border-color: var(--hb-border);
+  }
+
+  button.alert-radio-button,
+  button.alert-checkbox-button {
+    justify-content: center;
   }
 
   .alert-radio-inner,
@@ -188,7 +199,7 @@ ion-alert {
 
   .alert-button-group {
     padding: 8px 14px 14px;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 4px;
   }
 

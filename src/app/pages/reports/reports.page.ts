@@ -37,7 +37,8 @@ import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ReportsService } from '../../services/reports.service';
 import { BillingService } from '../../services';
 import { TranslatePipe } from '../../services/i18n.service';
-import { ESTABLECIMIENTO_COLORS } from '../../models';
+import { ESTABLECIMIENTO_COLORS, PALETTE_COLORS } from '../../models';
+import { ThemeService } from '../../services/theme.service';
 import {
   FinancialReport,
   ReportPeriodId,
@@ -89,10 +90,15 @@ export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
   private rateChart?: Chart;
   private viewReady = false;
 
+  get paletteColors(): string[] {
+    return PALETTE_COLORS[this.themeService.getPalette()] || ESTABLECIMIENTO_COLORS;
+  }
+
   constructor(
     private navController: NavController,
     private reportsService: ReportsService,
-    private billingService: BillingService
+    private billingService: BillingService,
+    private themeService: ThemeService
   ) {
     addIcons({
       arrowBackOutline,
@@ -310,7 +316,7 @@ export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
         labels: items.map(i => this.truncate(i.name, 18)),
         datasets: [{
           data: items.map(i => i.revenue),
-          backgroundColor: items.map((_, idx) => ESTABLECIMIENTO_COLORS[idx % ESTABLECIMIENTO_COLORS.length]),
+          backgroundColor: items.map((_, idx) => this.paletteColors[idx % this.paletteColors.length]),
           borderRadius: 8,
           barThickness: 18
         }]
@@ -365,7 +371,7 @@ export class ReportsPage implements OnInit, AfterViewInit, OnDestroy {
         labels: items.map(i => i.name),
         datasets: [{
           data: items.map(i => i.revenue),
-          backgroundColor: items.map((_, idx) => ESTABLECIMIENTO_COLORS[idx % ESTABLECIMIENTO_COLORS.length]),
+          backgroundColor: items.map((_, idx) => this.paletteColors[idx % this.paletteColors.length]),
           borderWidth: 0
         }]
       },

@@ -60,6 +60,7 @@ export class DayModalComponent implements OnInit {
   form!: FormGroup;
   establecimientos: string[] = [];
   existingEntries: HourEntry[] = [];
+  submitted = false;
 
   constructor(
     private fb: FormBuilder,
@@ -145,8 +146,9 @@ export class DayModalComponent implements OnInit {
   }
 
   getEntryError(index: number, field: string): boolean {
+    if (!this.submitted) return false;
     const control = this.entries.at(index).get(field);
-    return control ? control.invalid && control.touched : false;
+    return control ? control.invalid : false;
   }
 
   get exceedsMaxHours(): boolean {
@@ -154,8 +156,8 @@ export class DayModalComponent implements OnInit {
   }
 
   async save(): Promise<void> {
+    this.submitted = true;
     if (this.form.invalid) {
-      this.markAllAsTouched();
       return;
     }
 

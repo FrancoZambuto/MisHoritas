@@ -22,7 +22,7 @@
       <ion-select
         [(ngModel)]="selectedMonth"
         (ionChange)="onPeriodChange()"
-        interface="action-sheet"
+        interface="alert"
         [interfaceOptions]="{ header: ('billing.select_month' | translate) }"
       >
         @for (month of months; track month; let i = $index) {
@@ -35,7 +35,7 @@
       <ion-select
         [(ngModel)]="selectedYear"
         (ionChange)="onPeriodChange()"
-        interface="action-sheet"
+        interface="alert"
         [interfaceOptions]="{ header: ('billing.select_year' | translate) }"
       >
         @for (year of years; track year) {
@@ -86,6 +86,7 @@
           <ion-input
             type="number"
             inputmode="decimal"
+            step="any"
             [placeholder]="'billing.value_per_hour' | translate"
             [clearInput]="true"
             [value]="valoresMap[lineKey(line)] ?? ''"

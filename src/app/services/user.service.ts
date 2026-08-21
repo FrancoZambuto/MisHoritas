@@ -6,10 +6,12 @@ import {
   DEFAULT_USER,
   WizardState,
   ESTABLECIMIENTO_COLORS,
+  PALETTE_COLORS,
   ProfessionalAreaId,
   DEFAULT_EXISTING_USER_AREA,
   hasProfessionalAreaSelection
 } from '../models';
+import { ThemeService } from './theme.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,7 @@ export class UserService {
   private userSubject = new BehaviorSubject<User>(DEFAULT_USER);
   public user$: Observable<User> = this.userSubject.asObservable();
 
-  constructor(private storageService: StorageService) {}
+  constructor(private storageService: StorageService, private themeService: ThemeService) {}
 
   async loadUser(): Promise<User> {
     const user = await this.storageService.get<User>(StorageKeys.USER);
@@ -131,13 +133,28 @@ export class UserService {
     });
   }
 
+  private getActivePaletteColors(): string[] {
+    return PALETTE_COLORS[this.themeService.getPalette()] || ESTABLECIMIENTO_COLORS;
+  }
+
   getEstablecimientoColor(establecimiento: string): string {
-    const colors = this.userSubject.getValue().establecimientoColors || {};
-    return colors[establecimiento] || ESTABLECIMIENTO_COLORS[0];
+    const paletteColors = this.getActivePaletteColors();
+    const user = this.userSubject.getValue();
+    const index = user.establecimientos.indexOf(establecimiento);
+    if (index >= 0) {
+      return paletteColors[index % paletteColors.length];
+    }
+    return paletteColors[0];
   }
 
   getEstablecimientoColors(): { [key: string]: string } {
-    return this.userSubject.getValue().establecimientoColors || {};
+    const paletteColors = this.getActivePaletteColors();
+    const user = this.userSubject.getValue();
+    const result: { [key: string]: string } = {};
+    user.establecimientos.forEach((est, index) => {
+      result[est] = paletteColors[index % paletteColors.length];
+    });
+    return result;
   }
 
   async updateItems(

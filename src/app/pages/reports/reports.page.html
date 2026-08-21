@@ -15,7 +15,7 @@
       <ion-select
         [(ngModel)]="selectedPeriodId"
         (ionChange)="onPeriodChange()"
-        interface="action-sheet"
+        interface="alert"
         [interfaceOptions]="{ header: ('reports.period' | translate) }"
       >
         @for (option of periodOptions; track option.id) {
@@ -232,7 +232,7 @@
           <ion-select
             [(ngModel)]="selectedRateKey"
             (ionChange)="onRateSeriesChange()"
-            interface="action-sheet"
+            interface="alert"
             [interfaceOptions]="{ header: ('reports.rate' | translate) }"
           >
             @for (option of rateOptions; track option.label) {

@@ -34,7 +34,7 @@
               formControlName="establecimiento"
               (ionChange)="onEstablecimientoChange(i)"
               [placeholder]="'day_modal.select_establishment' | translate"
-              interface="action-sheet"
+              interface="alert"
               [interfaceOptions]="{ header: ('day_modal.establishment_header' | translate) }"
             >
               @for (est of establecimientos; track est) {
@@ -50,7 +50,7 @@
             <ion-select
               formControlName="tipoHora"
               [placeholder]="'day_modal.select_hour_type' | translate"
-              interface="action-sheet"
+              interface="alert"
               [interfaceOptions]="{ header: ('day_modal.hour_type_header' | translate) }"
             >
               @for (tipo of getTiposDeHoraForEntry(i); track tipo) {
@@ -67,7 +67,7 @@
               formControlName="cantidad"
               type="number"
               inputmode="decimal"
-              step="0.5"
+              step="any"
               min="0.01"
               [placeholder]="'day_modal.hours_amount' | translate"
             ></ion-input>

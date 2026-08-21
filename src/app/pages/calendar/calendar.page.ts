@@ -97,6 +97,7 @@ export class CalendarPage implements OnInit, OnDestroy {
 
   private hoursSub?: Subscription;
   private userSub?: Subscription;
+  private paletteSub?: Subscription;
 
   constructor(
     private modalController: ModalController,
@@ -140,12 +141,17 @@ export class CalendarPage implements OnInit, OnDestroy {
       this.generateCalendar();
     });
     
+    this.paletteSub = this.themeService.palette$.subscribe(() => {
+      this.generateCalendar();
+    });
+
     await this.hoursService.loadHours();
   }
 
   ngOnDestroy(): void {
     this.hoursSub?.unsubscribe();
     this.userSub?.unsubscribe();
+    this.paletteSub?.unsubscribe();
   }
 
   get currentMonthYear(): string {
