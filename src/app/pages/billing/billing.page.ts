@@ -240,7 +240,7 @@ export class BillingPage implements OnInit {
     this.billingLines.forEach(line => {
       const key = this.lineKey(line);
       const raw = this.valoresMap[key];
-      const parsed = typeof raw === 'number' ? raw : parseFloat(String(raw ?? ''));
+      const parsed = typeof raw === 'number' ? raw : parseFloat(String(raw ?? '').replace(',', '.'));
       valoresPorHora[key] = Number.isFinite(parsed) ? parsed : 0;
     });
     return valoresPorHora;
@@ -252,7 +252,7 @@ export class BillingPage implements OnInit {
     if (raw === '' || raw == null) {
       this.valoresMap[key] = null;
     } else {
-      const parsed = parseFloat(raw);
+      const parsed = parseFloat(String(raw).replace(',', '.'));
       this.valoresMap[key] = Number.isFinite(parsed) ? parsed : null;
     }
 

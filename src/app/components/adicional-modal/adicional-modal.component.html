@@ -45,8 +45,9 @@
     <label class="field-label">{{ 'adicional.amount' | translate }}</label>
     <ion-item lines="none" class="input-item">
       <ion-input
-        type="number"
+        type="text"
         inputmode="decimal"
+        pattern="[0-9]*[.,]?[0-9]*"
         [(ngModel)]="monto"
         placeholder="0"
         (ionInput)="errorMessage = ''"

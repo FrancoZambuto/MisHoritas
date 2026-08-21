@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { 
   IonHeader,
   IonToolbar,
@@ -104,11 +104,18 @@ export class DayModalComponent implements OnInit {
     }
   }
 
+  private decimalMin(min: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const val = parseFloat(String(control.value ?? '').replace(',', '.'));
+      return isNaN(val) || val < min ? { min: true } : null;
+    };
+  }
+
   addEntry(entry?: HourEntry): void {
     const entryGroup = this.fb.group({
       establecimiento: [entry?.establecimiento ?? '', Validators.required],
       tipoHora: [entry?.tipoHora ?? '', Validators.required],
-      cantidad: [entry?.cantidad ?? null, [Validators.required, Validators.min(0.01)]]
+      cantidad: [entry?.cantidad ?? '', [Validators.required, this.decimalMin(0.01)]]
     });
     this.entries.push(entryGroup);
   }
@@ -174,7 +181,7 @@ export class DayModalComponent implements OnInit {
     const entries: HourEntry[] = this.entries.controls.map(control => ({
       establecimiento: control.get('establecimiento')?.value,
       tipoHora: control.get('tipoHora')?.value,
-      cantidad: parseFloat(control.get('cantidad')?.value)
+      cantidad: parseFloat(String(control.get('cantidad')?.value).replace(',', '.'))
     }));
 
     await this.hoursService.setEntriesForDate(this.date, entries);
@@ -217,7 +224,7 @@ export class DayModalComponent implements OnInit {
 
   getTotalHours(): number {
     return this.entries.controls.reduce((sum, control) => {
-      const cantidad = parseFloat(control.get('cantidad')?.value) || 0;
+      const cantidad = parseFloat(String(control.get('cantidad')?.value ?? '').replace(',', '.')) || 0;
       return sum + cantidad;
     }, 0);
   }

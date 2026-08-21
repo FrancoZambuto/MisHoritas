@@ -65,10 +65,9 @@
           <ion-item lines="none" class="input-item">
             <ion-input
               formControlName="cantidad"
-              type="number"
+              type="text"
               inputmode="decimal"
-              step="any"
-              min="0.01"
+              pattern="[0-9]*[.,]?[0-9]*"
               [placeholder]="'day_modal.hours_amount' | translate"
             ></ion-input>
           </ion-item>

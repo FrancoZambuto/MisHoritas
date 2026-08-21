@@ -57,7 +57,7 @@ export class AdicionalModalComponent implements OnInit {
   @Input() conceptoSuggestions: string[] = [];
 
   concepto = '';
-  monto: number | null = null;
+  monto: number | string | null = null;
   establecimiento: string = '';
   nota = '';
   errorMessage = '';
@@ -81,8 +81,12 @@ export class AdicionalModalComponent implements OnInit {
     return this.adicional ? this.i18n.t('adicional.edit_title') : this.i18n.t('adicional.add_title');
   }
 
+  private parseMonto(): number {
+    return parseFloat(String(this.monto ?? '').replace(',', '.')) || 0;
+  }
+
   get canSave(): boolean {
-    return this.concepto.trim().length >= 2 && !!this.monto && this.monto > 0;
+    return this.concepto.trim().length >= 2 && this.parseMonto() > 0;
   }
 
   selectConcepto(concepto: string): void {
@@ -94,7 +98,7 @@ export class AdicionalModalComponent implements OnInit {
     const normalized = normalizeAdicional({
       id: this.adicional?.id || createAdicionalId(),
       concepto: this.concepto,
-      monto: this.monto ?? 0,
+      monto: this.parseMonto(),
       establecimiento: this.establecimiento || null,
       nota: this.nota
     });
